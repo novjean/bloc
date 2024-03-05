@@ -128,7 +128,7 @@ class ArtistBanner extends StatelessWidget {
       ),
       onPressed: () {
         final uri = Uri.parse(isListen ? party.listenUrl : party.instagramUrl);
-        NetworkUtils.launchInBrowser(uri);
+        NetworkUtils.launchInAppBrowser(uri);
       },
       child: ClipRRect(
         borderRadius: BorderRadius.circular(20.0),

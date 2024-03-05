@@ -370,7 +370,7 @@ class _PartyBannerState extends State<PartyBanner> {
         onPressed: () {
           final uri = Uri.parse(
               isListen ? widget.party.listenUrl : widget.party.instagramUrl);
-          NetworkUtils.launchInBrowser(uri);
+          NetworkUtils.launchInAppBrowser(uri);
         },
         icon: Icon(
           isListen ? Icons.music_note_outlined : Icons.join_right,
@@ -547,7 +547,7 @@ class _PartyBannerState extends State<PartyBanner> {
     }
 
     final uri = Uri.parse(widget.party.ticketUrl);
-    NetworkUtils.launchInBrowser(uri);
+    NetworkUtils.launchInAppBrowser(uri);
 
     if (UserPreferences.isUserLoggedIn()) {
       User user = UserPreferences.myUser;
@@ -696,7 +696,7 @@ class _PartyBannerState extends State<PartyBanner> {
         );
       } else if(widget.party.ticketUrl.isNotEmpty) {
           final uri = Uri.parse(widget.party.ticketUrl);
-          NetworkUtils.launchInBrowser(uri);
+          NetworkUtils.launchInAppBrowser(uri);
       } else {
         Logx.ist(_TAG, 'no tickets are available at the moment!');
       }

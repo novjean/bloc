@@ -27,6 +27,7 @@ import '../routes/route_constants.dart';
 import '../services/notification_service.dart';
 import '../utils/logx.dart';
 import '../widgets/ui/slider_view.dart';
+import 'advertise/advert_screen.dart';
 import 'captain/captain_main_screen.dart';
 import 'experimental/bloc_selection_screen.dart';
 import 'organizer/organizer_screen.dart';
@@ -461,6 +462,17 @@ class _MainScreenState extends State<MainScreen> {
           Navigator.of(context).push(
             MaterialPageRoute(builder: (ctx) => const PromoterMainScreen()),
           );
+          break;
+        }
+      case 'advertisement':
+        {
+          if(!kIsWeb){
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (ctx) => AdvertScreen()),
+            );
+          } else {
+            DialogUtils.showDownloadAppDialog(context, DialogUtils.downloadDefault);
+          }
           break;
         }
       case 'organizer':

@@ -40,11 +40,6 @@ class _AdCampaignAddEditScreenState extends State<AdCampaignAddEditScreen> {
   TimeOfDay sTimeOfDay = TimeOfDay.now();
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
           titleSpacing: 0,

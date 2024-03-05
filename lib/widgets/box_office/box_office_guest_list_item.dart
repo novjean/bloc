@@ -609,7 +609,7 @@ class _BoxOfficeGuestListItemState extends State<BoxOfficeGuestListItem> {
 
   void _handleBuyExternalTixPressed() {
     final uri = Uri.parse(widget.party.ticketUrl);
-    NetworkUtils.launchInBrowser(uri);
+    NetworkUtils.launchInAppBrowser(uri);
 
     if (UserPreferences.isUserLoggedIn()) {
       User user = UserPreferences.myUser;
@@ -762,7 +762,7 @@ class _BoxOfficeGuestListItemState extends State<BoxOfficeGuestListItem> {
                         }
 
                         final uri = Uri.parse(cas[1].action);
-                        NetworkUtils.launchInBrowser(uri);
+                        NetworkUtils.launchInAppBrowser(uri);
 
                         Navigator.of(ctx).pop();
                       },
@@ -786,7 +786,7 @@ class _BoxOfficeGuestListItemState extends State<BoxOfficeGuestListItem> {
                   }
 
                   final uri = Uri.parse(cas[0].action);
-                  NetworkUtils.launchInBrowser(uri);
+                  NetworkUtils.launchInAppBrowser(uri);
 
                   Navigator.of(ctx).pop();
                 },
@@ -882,7 +882,7 @@ class _BoxOfficeGuestListItemState extends State<BoxOfficeGuestListItem> {
     if(kIsWeb){
       if(widget.party.ticketUrl.isNotEmpty){
         final uri = Uri.parse(widget.party.ticketUrl);
-        NetworkUtils.launchInBrowser(uri);
+        NetworkUtils.launchInAppBrowser(uri);
       } else {
         //navigate to purchase tix screen
         Tix tix = Dummy.getDummyTix();

@@ -636,7 +636,7 @@ class _EventScreenState extends State<EventScreen> {
                 );
               } else if (mParty.ticketUrl.isNotEmpty) {
                 final uri = Uri.parse(mParty.ticketUrl);
-                NetworkUtils.launchInBrowser(uri);
+                NetworkUtils.launchInAppBrowser(uri);
               } else {
                 Logx.ilt(_TAG, 'bloc app is required to purchase this ticket');
                 DialogUtils.showDownloadAppDialog(context, DialogUtils.downloadTixGuestList);
@@ -730,7 +730,7 @@ class _EventScreenState extends State<EventScreen> {
           ),
           onPressed: () {
             final uri = Uri.parse(mParty.ticketUrl);
-            NetworkUtils.launchInBrowser(uri);
+            NetworkUtils.launchInAppBrowser(uri);
 
             if (UserPreferences.isUserLoggedIn()) {
               User user = UserPreferences.myUser;

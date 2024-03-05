@@ -48,9 +48,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void initState() {
-    if (widget.shouldTriggerSkip) {
-      _verifyUsingSkipPhone();
-    }
+    // if (widget.shouldTriggerSkip) {
+    //   _verifyUsingSkipPhone();
+    // }
     super.initState();
   }
 
@@ -289,6 +289,7 @@ class _LoginScreenState extends State<LoginScreen> {
         logger.e(e);
       }
     } else {
+
       try {
         await FirebaseAuth.instance.verifyPhoneNumber(
             phoneNumber: phone,
@@ -308,12 +309,17 @@ class _LoginScreenState extends State<LoginScreen> {
               _verifyUsingSkipPhone();
             },
             codeSent: (String verificationID, int? resendToken) {
+              Logx.d(_TAG, 'codeSent: $verificationID');
               signInToSkipBloc(verificationID);
             },
             codeAutoRetrievalTimeout: (String verificationId) {
-              signInToSkipBloc(verificationId);
+              if(!UserPreferences.isUserLoggedIn()){
+                signInToSkipBloc(verificationId);
+              } else {
+                Logx.d(_TAG, 'codeAutoRetrievalTimeout: $verificationId');
+              }
             },
-            timeout: const Duration(seconds: 120));
+            timeout: const Duration(seconds: 60));
       } on PlatformException catch (e, s) {
         Logx.e(_TAG, e, s);
       } on Exception catch (e, s) {
@@ -326,6 +332,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
     return const LoadingWidget();
   }
+
+  bool _isSkipLoaded = false;
 
   void signInToSkipBloc(String verificationId) async {
     try {
@@ -364,8 +372,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 if (mounted) {
                   GoRouter.of(context)
                       .pushReplacementNamed(RouteConstants.landingRouteName);
+                  _isSkipLoaded = true;
                 } else {
                   Logx.em(_TAG, 'state is not mounted');
+                  Logx.d(_TAG, 'skip loaded : $_isSkipLoaded | logged in : ${UserPreferences.isUserLoggedIn()}');
+
+                  // if(!_isSkipLoaded && !UserPreferences.isUserLoggedIn()){
+                  //   _verifyUsingSkipPhone();
+                  // }
                 }
               } on PlatformException catch (e, s) {
                 Logx.e(_TAG, e, s);

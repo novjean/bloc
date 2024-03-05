@@ -2,6 +2,7 @@ import 'package:bloc/db/shared_preferences/ui_preferences.dart';
 import 'package:bloc/helpers/bloc_helper.dart';
 import 'package:bloc/main.dart';
 import 'package:bloc/utils/constants.dart';
+import 'package:bloc/utils/network_utils.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delayed_display/delayed_display.dart';
@@ -30,6 +31,7 @@ import '../widgets/home/bloc_slide_item.dart';
 import '../widgets/parties/party_banner.dart';
 import '../widgets/store_badge_item.dart';
 import '../widgets/ui/dark_button_widget.dart';
+import 'advertise/advert_add_edit_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({key}) : super(key: key);
@@ -87,7 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
         }
 
         AdCampaign ad;
-        if(adCampaigns.isNotEmpty){
+        if(adCampaigns.isNotEmpty) {
           ad = adCampaigns[0];
           if(adCampaigns.length>1){
             ad = adCampaigns[NumberUtils.getRandomIndexNumber(adCampaigns.length)];
@@ -98,9 +100,10 @@ class _HomeScreenState extends State<HomeScreen> {
           } else {
             if(UserPreferences.isUserLoggedIn()){
               int timeGap = Timestamp.now().millisecondsSinceEpoch - UserPreferences.myUser.lastSeenAt;
-              if(timeGap < 3000){
-                _showAdDialog(ad, 600000);
-              }
+              // if(timeGap < 3000){
+              //   _showAdDialog(ad, 600000);
+              // }
+              _showAdDialog(ad, 600000);
             } else {
               _showAdDialog(ad, 60000);
             }
@@ -628,8 +631,9 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _showAdDialog(AdCampaign adCampaign, int minTime) {
-    int timeNow = Timestamp.now().millisecondsSinceEpoch;
+    Logx.d(_TAG, '_showAdDialog');
 
+    int timeNow = Timestamp.now().millisecondsSinceEpoch;
     bool showAd = false;
 
     if(UiPreferences.getLastHomeAdTime() == 0){
@@ -644,7 +648,8 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     }
 
-    if(showAd){
+    //todo: change this
+    if(showAd || true){
       FirestoreHelper.updateAdCampaignViews(adCampaign.id);
 
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -665,7 +670,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       if (adCampaign.isPartyAd) {
                         _handleAdPartyClickActions(adCampaign, false);
                       } else {
-                        // not party ad, send them to the link or some such
+                        FirestoreHelper.updateAdCampaignClickCount(adCampaign.id);
+                        if(adCampaign.linkUrl.isNotEmpty){
+                          final uri = Uri.parse(adCampaign.linkUrl);
+                          NetworkUtils.launchInAppBrowser(uri);
+                        } else {
+                          // nothing to do
+                        }
                       }
                     },
                     child: Container(
@@ -680,8 +691,31 @@ class _HomeScreenState extends State<HomeScreen> {
                             fit: BoxFit.fitWidth,
                           ),
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
+                                TextButton(
+                                  onPressed: () async {
+                                    Navigator.of(ctx).pop();
+
+                                    await Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              AdvertAddEditScreen(
+                                                advert: Dummy.getDummyAdvert(),
+                                                task: 'add',
+                                              )),
+                                    );
+
+                                  },
+                                  child: const DelayedDisplay(
+                                    delay: Duration(seconds: 1),
+                                    child: Text(
+                                      "advertise here",
+                                      style: TextStyle(
+                                          color: Constants.primary, fontSize: 15),
+                                    ),
+                                  ),
+                                ),
                                   TextButton(
                                     onPressed: () {
                                       Navigator.of(ctx).pop();

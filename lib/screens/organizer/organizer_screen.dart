@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
-import 'package:bloc/widgets/ui/button_widget.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -51,8 +50,6 @@ class _OrganizerScreenState extends State<OrganizerScreen> {
       } else {
         // user is not an organizer
         Logx.ilt(_TAG, '🪅 setting up your event company...');
-
-
 
         if(UserPreferences.isUserLoggedIn()){
           //upload random photo

@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:bloc/db/entity/ad_campaign.dart';
 import 'package:bloc/db/entity/bloc.dart';
@@ -33,13 +32,13 @@ import 'package:bloc/db/entity/ui_photo.dart';
 import 'package:bloc/db/entity/user.dart' as blocUser;
 import 'package:bloc/db/entity/user_lounge.dart';
 import 'package:bloc/db/entity/user_organizer.dart';
-import 'package:bloc/helpers/firestorage_helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 import '../db/entity/ad.dart';
+import '../db/entity/advert.dart';
 import '../db/entity/city.dart';
 import '../db/entity/friend.dart';
 import '../db/entity/lounge.dart';
@@ -67,6 +66,7 @@ class FirestoreHelper {
 
   static String ADS = 'ads';
   static String AD_CAMPAIGNS = 'ad_campaigns';
+  static String ADVERTS = 'adverts';
   static String BLOCS = 'blocs';
   static String CAPTAIN_SERVICES = 'captain_services';
   static String CATEGORIES = 'categories';
@@ -172,7 +172,7 @@ class FirestoreHelper {
     FirebaseFirestore.instance.collection(ADS).doc(docId).delete();
   }
 
-  /** Ad Campaigns **/
+  /** ad campaigns **/
   static void pushAdCampaign(AdCampaign adCampaign) async {
     try {
       await FirebaseFirestore.instance
@@ -239,7 +239,35 @@ class FirestoreHelper {
     FirebaseFirestore.instance.collection(AD_CAMPAIGNS).doc(docId).delete();
   }
 
-  /** Blocs **/
+  /** adverts **/
+  static void pushAdvert(Advert advert) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(ADVERTS)
+          .doc(advert.id)
+          .set(advert.toMap());
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      Logx.em(_TAG, e.toString());
+    }
+  }
+
+  static  Stream<QuerySnapshot> getAdvertsByUser(String userId) {
+    return FirebaseFirestore.instance
+        .collection(ADVERTS)
+        .where('ownerId', isEqualTo: 'userId')
+        .orderBy('startTime', descending: false)
+        .snapshots();
+  }
+
+  static void deleteAdvert(String docId) {
+    FirebaseFirestore.instance.collection(ADVERTS).doc(docId).delete();
+  }
+
+  /** blocs **/
   static void pushBloc(Bloc bloc) async {
     try {
       await FirebaseFirestore.instance

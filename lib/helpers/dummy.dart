@@ -14,6 +14,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../db/entity/ad.dart';
 import '../db/entity/ad_campaign.dart';
+import '../db/entity/advert.dart';
 import '../db/entity/bloc.dart';
 import '../db/entity/bloc_service.dart';
 import '../db/entity/captain_service.dart';
@@ -82,6 +83,22 @@ class Dummy {
         isPartyAd: false,
         partyId: '',
         endTime: Timestamp.now().millisecondsSinceEpoch);
+
+    return dummy;
+  }
+
+  static Advert getDummyAdvert() {
+    Advert dummy = Advert(
+        id: StringUtils.getRandomString(28),
+        ownerId: UserPreferences.myUser.id,
+        name: '',
+        imageUrls: [],
+        clickCount: 0,
+        views: 0,
+        linkUrl: '',
+        isActive: false,
+        startTime: Timestamp.now().millisecondsSinceEpoch,
+        endTime: Timestamp.now().millisecondsSinceEpoch + DateTimeUtils.millisecondsWeek);
 
     return dummy;
   }

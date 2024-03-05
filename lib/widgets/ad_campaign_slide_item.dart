@@ -17,7 +17,7 @@ class AdCampaignSlideItem extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         final uri = Uri.parse(adCampaign.linkUrl);
-        NetworkUtils.launchInBrowser(uri);
+        NetworkUtils.launchInAppBrowser(uri);
         FirestoreHelper.updateAdCampaignClickCount(adCampaign.id);
       },
       child: Hero(

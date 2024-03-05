@@ -15,6 +15,7 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:logger/logger.dart';
 
+import 'db/shared_preferences/table_preferences.dart';
 import 'db/shared_preferences/user_preferences.dart';
 import 'firebase_options.dart';
 import 'utils/constants.dart';
@@ -65,7 +66,7 @@ Future<void> main() async {
   // shared preferences initialization
   await UserPreferences.init();
   await UiPreferences.init();
-  // await TablePreferences.init();
+  await TablePreferences.init();
   await PartyGuestPreferences.init();
 
   // disabling landscape until all ui issues are resolved

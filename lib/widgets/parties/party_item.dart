@@ -288,7 +288,7 @@ class PartyItem extends StatelessWidget {
         child: const Text('buy\nticket\nnow'),
         onPressed: () {
           final uri = Uri.parse(party.ticketUrl);
-          NetworkUtils.launchInBrowser(uri);
+          NetworkUtils.launchInAppBrowser(uri);
         },
       ),
     );

@@ -214,7 +214,7 @@ class _ArtistScreenState extends State<ArtistScreen> {
                         InkWell(
                           onTap: () {
                             final uri = Uri.parse(mParty.listenUrl);
-                            NetworkUtils.launchInBrowser(uri);
+                            NetworkUtils.launchInAppBrowser(uri);
                           },
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
@@ -255,7 +255,7 @@ class _ArtistScreenState extends State<ArtistScreen> {
                         InkWell(
                           onTap: () {
                             final uri = Uri.parse(mParty.instagramUrl);
-                            NetworkUtils.launchInBrowser(uri);
+                            NetworkUtils.launchInAppBrowser(uri);
                           },
                           child: const Padding(
                             padding: EdgeInsets.symmetric(

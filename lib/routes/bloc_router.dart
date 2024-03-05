@@ -72,7 +72,7 @@ class BlocRouter {
             path: ':skip',
             pageBuilder: (context, state) {
               String skipString = state.pathParameters['skip']!;
-              // Logx.dst(_TAG, 'bloc router: login/:skip ${skipString}');
+              Logx.d(_TAG, 'bloc router: login/:skip $skipString');
 
               bool val = false;
               if (skipString == 'true') {

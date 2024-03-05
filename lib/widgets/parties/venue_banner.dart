@@ -220,7 +220,7 @@ class _VenueBannerState extends State<VenueBanner> {
           final uri = Uri.parse(url);
           NetworkUtils.launchInBrowser(uri);
         },
-        icon: Icon(
+        icon: const Icon(
           Icons.map,
           size: 24.0,
         ),

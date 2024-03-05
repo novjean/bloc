@@ -4,6 +4,7 @@ import 'package:bloc/db/entity/ui_photo.dart';
 
 import '../db/entity/ad.dart';
 import '../db/entity/ad_campaign.dart';
+import '../db/entity/advert.dart';
 import '../db/entity/bloc.dart';
 import '../db/entity/bloc_service.dart';
 import '../db/entity/captain_service.dart';
@@ -334,6 +335,129 @@ class Fresh {
       fresh = fresh.copyWith(endTime: adCampaign.endTime);
     } catch (e) {
       Logx.em(_TAG, 'adCampaign endTime not exist for id: ${adCampaign.id}');
+    }
+
+    return fresh;
+  }
+
+  /** advert **/
+  static Advert freshAdvertMap(Map<String, dynamic> map, bool shouldUpdate) {
+    Advert advert = Dummy.getDummyAdvert();
+
+    bool isModelChanged = false;
+
+    try {
+      advert = advert.copyWith(id: map['id'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'advert id not exist');
+    }
+    try {
+      advert = advert.copyWith(name: map['name'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'advert name not exist for id: ${advert.id}');
+      isModelChanged = true;
+    }
+    try {
+      advert = advert.copyWith(imageUrls: List<String>.from(map['imageUrls']));
+    } catch (e) {
+      Logx.em(_TAG, 'advert imageUrls not exist for id: ${advert.id}');
+      advert = advert.copyWith(imageUrls: []);
+      isModelChanged = true;
+    }
+    try {
+      advert = advert.copyWith(linkUrl: map['linkUrl'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'advert linkUrl not exist for id: ${advert.id}');
+      isModelChanged = true;
+    }
+    try {
+      advert = advert.copyWith(clickCount: map['clickCount'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'advert clickCount not exist for id: ${advert.id}');
+      isModelChanged = true;
+    }
+    try {
+      advert = advert.copyWith(views: map['views'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'advert views not exist for id: ${advert.id}');
+      isModelChanged = true;
+    }
+    try {
+      advert = advert.copyWith(isActive: map['isActive'] as bool);
+    } catch (e) {
+      Logx.em(_TAG, 'advert isActive not exist for id: ${advert.id}');
+      isModelChanged = true;
+    }
+
+    try {
+      advert = advert.copyWith(startTime: map['startTime'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'advert startTime not exist for id: ${advert.id}');
+      isModelChanged = true;
+    }
+    try {
+      advert = advert.copyWith(endTime: map['endTime'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'advert endTime not exist for id: ${advert.id}');
+      isModelChanged = true;
+    }
+
+    if (isModelChanged && shouldUpdate) {
+      Logx.i(_TAG, 'updating advert ${advert.id}');
+      FirestoreHelper.pushAdvert(advert);
+    }
+
+    return advert;
+  }
+
+  static Advert freshAdvert(Advert advert) {
+    Advert fresh = Dummy.getDummyAdvert();
+
+    try {
+      fresh = fresh.copyWith(id: advert.id);
+    } catch (e) {
+      Logx.em(_TAG, 'advert id not exist');
+    }
+    try {
+      fresh = fresh.copyWith(name: advert.name);
+    } catch (e) {
+      Logx.em(_TAG, 'advert name not exist for id: ${advert.id}');
+    }
+    try {
+      fresh = fresh.copyWith(imageUrls: advert.imageUrls);
+    } catch (e) {
+      Logx.em(_TAG, 'advert imageUrls not exist for id: ${advert.id}');
+    }
+    try {
+      fresh = fresh.copyWith(linkUrl: advert.linkUrl);
+    } catch (e) {
+      Logx.em(_TAG, 'advert linkUrl not exist for id: ${advert.id}');
+    }
+    try {
+      fresh = fresh.copyWith(clickCount: advert.clickCount);
+    } catch (e) {
+      Logx.em(_TAG, 'advert clickCount not exist for id: ${advert.id}');
+    }
+    try {
+      fresh = fresh.copyWith(views: advert.views);
+    } catch (e) {
+      Logx.em(_TAG, 'advert views not exist for id: ${advert.id}');
+    }
+    try {
+      fresh = fresh.copyWith(isActive: advert.isActive);
+    } catch (e) {
+      Logx.em(_TAG, 'advert isActive not exist for id: ${advert.id}');
+    }
+
+    try {
+      fresh = fresh.copyWith(startTime: advert.startTime);
+    } catch (e) {
+      Logx.em(_TAG, 'advert startTime not exist for id: ${advert.id}');
+    }
+    try {
+      fresh = fresh.copyWith(endTime: advert.endTime);
+    } catch (e) {
+      Logx.em(_TAG, 'advert endTime not exist for id: ${advert.id}');
     }
 
     return fresh;
