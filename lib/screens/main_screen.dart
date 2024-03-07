@@ -110,6 +110,7 @@ class _MainScreenState extends State<MainScreen> {
       fbm.unsubscribeFromTopic('offer');
       fbm.unsubscribeFromTopic('user_photos');
       fbm.unsubscribeFromTopic('tixs');
+      fbm.unsubscribeFromTopic('adverts');
       fbm.unsubscribeFromTopic('support_chats');
       fbm.unsubscribeFromTopic('notification_tests');
       fbm.unsubscribeFromTopic('notification_tests_2');
@@ -133,6 +134,7 @@ class _MainScreenState extends State<MainScreen> {
       }
       if (user.clearanceLevel == Constants.ADMIN_LEVEL) {
         fbm.subscribeToTopic('user_photos');
+        fbm.subscribeToTopic('adverts');
         fbm.subscribeToTopic('notification_tests');
         fbm.subscribeToTopic('notification_tests_2');
       }
@@ -357,6 +359,7 @@ class _MainScreenState extends State<MainScreen> {
       fbm.unsubscribeFromTopic('offer');
       fbm.unsubscribeFromTopic('user_photos');
       fbm.unsubscribeFromTopic('tixs');
+      fbm.unsubscribeFromTopic('adverts');
       fbm.unsubscribeFromTopic('support_chats');
       fbm.unsubscribeFromTopic('notification_tests');
       fbm.unsubscribeFromTopic('notification_tests_2');
@@ -464,7 +467,7 @@ class _MainScreenState extends State<MainScreen> {
           );
           break;
         }
-      case 'advertisement':
+      case 'advertise':
         {
           if(!kIsWeb){
             GoRouter.of(context).pushNamed(RouteConstants.advertiseRouteName);
@@ -494,7 +497,7 @@ class _MainScreenState extends State<MainScreen> {
       case 'owner':
         {
           Navigator.of(context).push(
-            MaterialPageRoute(builder: (ctx) => OwnerScreen()),
+            MaterialPageRoute(builder: (ctx) => const OwnerScreen()),
           );
           break;
         }

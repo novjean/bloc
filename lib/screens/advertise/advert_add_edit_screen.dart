@@ -330,32 +330,37 @@ class _AdvertAddEditScreenState extends State<AdvertAddEditScreen> {
           onClicked: () async {
 
             int timeDiff = widget.advert.endTime - widget.advert.startTime;
-            double days = (timeDiff/DateTimeUtils.millisecondsDay);
 
-            double totalAmount = days * 10;
+            if(timeDiff>0){
+              double days = (timeDiff/DateTimeUtils.millisecondsDay);
 
-            double igst = totalAmount * Constants.igstPercent;
-            double subTotal = totalAmount - igst;
-            double bookingFee = totalAmount * 0;
-            double grandTotal = subTotal + igst + bookingFee;
+              double totalAmount = days * 10;
 
-            widget.advert = widget.advert.copyWith(
-                igst: igst,
-                subTotal: subTotal,
-                bookingFee: bookingFee,
-                total: grandTotal);
+              double igst = totalAmount * Constants.igstPercent;
+              double subTotal = totalAmount - igst;
+              double bookingFee = totalAmount * 0;
+              double grandTotal = subTotal + igst + bookingFee;
 
-            Advert freshAdvert = Fresh.freshAdvert(widget.advert);
-            await FirestoreHelper.pushAdvert(freshAdvert);
+              widget.advert = widget.advert.copyWith(
+                  igst: igst,
+                  subTotal: subTotal,
+                  bookingFee: bookingFee,
+                  total: grandTotal);
 
-            // navigate to payment page
-            await Navigator.of(context).push (
-              MaterialPageRoute(
-                  builder: (context) =>
-                      AdvertCheckoutScreen(
-                        advert: widget.advert,
-                      )),
-            );
+              Advert freshAdvert = Fresh.freshAdvert(widget.advert);
+              await FirestoreHelper.pushAdvert(freshAdvert);
+
+              // navigate to payment page
+              await Navigator.of(context).push (
+                MaterialPageRoute(
+                    builder: (context) =>
+                        AdvertCheckoutScreen(
+                          advert: widget.advert,
+                        )),
+              );
+            } else {
+              Logx.ilt(_TAG, 'end time cannot be before start time');
+            }
           },
         ),
         const SizedBox(height: 24),

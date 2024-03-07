@@ -10,6 +10,7 @@ import 'package:go_router/go_router.dart';
 
 import '../api/apis.dart';
 import '../db/entity/ad.dart';
+import '../db/entity/advert.dart';
 import '../db/entity/celebration.dart';
 import '../db/entity/notification_test.dart';
 import '../db/entity/party_guest.dart';
@@ -256,6 +257,27 @@ class NotificationService {
             NotificationService.showDefaultNotification(title, body);
           } else {
             Logx.d(_TAG, 'guest list: ${partyGuest.name} added');
+          }
+        }
+        break;
+      }
+      case 'adverts':{
+        Advert advert = Fresh.freshAdvertMap(jsonDecode(data['document']), false);
+        if(notificationId == advert.id){
+          return;
+        } else {
+          notificationId = advert.id;
+
+          if(advert.isSuccess){
+            String title = '📣 advertise : ${advert.userName}';
+            String body = 'ad purchased for \u20B9 ${advert.total}';
+
+            NotificationService.showDefaultNotification(title, body);
+          } else {
+            String title = '📣 advertise : ${advert.userName}';
+            String body = 'ad purchase failed for \u20B9 ${advert.total}';
+
+            NotificationService.showDefaultNotification(title, body);
           }
         }
         break;

@@ -272,6 +272,25 @@ exports.tixFunction = functions
       });
     });
 
+exports.advertFunction = functions
+    .region('asia-south1')
+    .firestore
+    .document('adverts/{document}')
+    .onCreate((snapshot, context) => {
+      console.log(snapshot.data());
+      return admin.messaging().sendToTopic('adverts', {
+        notification: {
+          title: '🎙️ advertise : ' + snapshot.data().title,
+          body: 'ad request for ' + snapshot.data().total,
+          clickAction: 'FLUTTER_NOTIFICATION_CLICK',
+        },
+        data: {
+          type: 'adverts',
+          document: JSON.stringify(snapshot.data()),
+        },
+      });
+    });
+
 exports.supportChatFunction = functions
     .region('asia-south1')
     .firestore
