@@ -82,6 +82,9 @@ class Dummy {
         isStorySize: false,
         isPartyAd: false,
         partyId: '',
+        isPurchased: false,
+        advertId: '',
+        startTime: Timestamp.now().millisecondsSinceEpoch,
         endTime: Timestamp.now().millisecondsSinceEpoch);
 
     return dummy;
@@ -89,16 +92,39 @@ class Dummy {
 
   static Advert getDummyAdvert() {
     Advert dummy = Advert(
-        id: StringUtils.getRandomString(28),
-        ownerId: UserPreferences.myUser.id,
-        name: '',
-        imageUrls: [],
-        clickCount: 0,
-        views: 0,
-        linkUrl: '',
-        isActive: false,
-        startTime: Timestamp.now().millisecondsSinceEpoch,
-        endTime: Timestamp.now().millisecondsSinceEpoch + DateTimeUtils.millisecondsWeek);
+      id: StringUtils.getRandomString(28),
+      userId: UserPreferences.myUser.id,
+      userName: UserPreferences.myUser.username,
+      userPhone: UserPreferences.myUser.phoneNumber.toString(),
+      userEmail: UserPreferences.myUser.email,
+
+      title: '',
+      imageUrls: [],
+      clickCount: 0,
+      views: 0,
+      linkUrl: '',
+
+      isActive: false,
+      isPaused: false,
+
+      createdAt: Timestamp.now().millisecondsSinceEpoch,
+      startTime: Timestamp.now().millisecondsSinceEpoch,
+      endTime: Timestamp.now().millisecondsSinceEpoch +
+          DateTimeUtils.millisecondsWeek,
+
+      isSuccess: false,
+      isCompleted: false,
+
+      merchantTransactionId: '',
+      transactionId: '',
+      transactionResponseCode: '',
+      result: '',
+
+      igst: 0,
+      subTotal: 0,
+      bookingFee: 0,
+      total: 0,
+    );
 
     return dummy;
   }

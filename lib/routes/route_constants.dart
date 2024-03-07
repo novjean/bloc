@@ -6,6 +6,7 @@ class RouteConstants {
   static const String artistRouteName = 'artist';
   static const String boxOfficeRouteName = 'box_office';
   static const String reservationRouteName = 'reservation';
+  static const String advertiseRouteName = 'advertise';
 
   static const String buyTixRouteName = 'buy_tix';
 

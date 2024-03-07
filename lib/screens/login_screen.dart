@@ -97,6 +97,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 case ConnectionState.active:
                                 case ConnectionState.done:
                                   {
+                                    Logx.d(_TAG, 'future user doc received');
                                     if (snapshot.hasError) {
                                       Logx.em(_TAG,
                                           'user snapshot has error: ${snapshot.error}');
@@ -109,13 +110,17 @@ class _LoginScreenState extends State<LoginScreen> {
                                     } else if (snapshot.hasData &&
                                         snapshot.data!.exists) {
                                       // the best case scenario
+                                      Logx.d(_TAG,
+                                          'user snapshot has data and exists');
                                       Map<String, dynamic> data = snapshot.data!
                                           .data() as Map<String, dynamic>;
-                                      final blocUser.User user =
-                                          Fresh.freshUserMap(data, true);
+                                      final blocUser.User user = Fresh.freshUserMap(data, true);
                                       UserPreferences.setUser(user);
 
-                                      return SplashScreen();
+                                      if(user.name != 'bloc'){
+                                        Logx.ist(_TAG, 'hey ${user.name.toLowerCase()}, signing you in...');
+                                      }
+                                      return signInWidget();
                                     } else {
                                       Logx.i(_TAG,
                                           'user snapshot undefined path ');

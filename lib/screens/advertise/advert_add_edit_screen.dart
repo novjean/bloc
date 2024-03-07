@@ -1,7 +1,10 @@
 import 'dart:io';
 
+import 'package:bloc/db/entity/ad_campaign.dart';
 import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:bloc/helpers/fresh.dart';
+import 'package:bloc/screens/manager/adverts/advert_checkout_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
@@ -17,6 +20,7 @@ import '../../../widgets/ui/app_bar_title.dart';
 import '../../../widgets/ui/button_widget.dart';
 import '../../../widgets/ui/textfield_widget.dart';
 import '../../db/entity/advert.dart';
+import '../../helpers/dummy.dart';
 
 class AdvertAddEditScreen extends StatefulWidget {
   Advert advert;
@@ -70,8 +74,8 @@ class _AdvertAddEditScreenState extends State<AdvertAddEditScreen> {
               children: [
                 SizedBox(
                    width: double.infinity,
-                  child: Image.asset('assets/images/logo.png', // Replace with your actual asset path
-                  fit: BoxFit.cover, // Use BoxFit to cover the entire container
+                  child: Image.asset('assets/images/logo.png',
+                  fit: BoxFit.cover,
                         ),
                       ),
                 Positioned(
@@ -109,79 +113,11 @@ class _AdvertAddEditScreenState extends State<AdvertAddEditScreen> {
               ]
             ),
         const SizedBox(height: 15),
-        // Row(
-        //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //   children: [
-        //     Text('${widget.advert.imageUrls.length} photos : '),
-        //     const Spacer(),
-        //     ButtonWidget(
-        //       text: 'pick file',
-        //       onClicked: () async {
-        //         final image = await ImagePicker().pickImage(
-        //           source: ImageSource.gallery,
-        //           imageQuality: 99,
-        //           maxHeight: isStorySize ? longSide : shortSide,
-        //           maxWidth: isStorySize ? shortSide : longSide,
-        //         );
-        //         if (image == null) return;
-        //
-        //         int fileSize = await image.length();
-        //         Logx.ist(_TAG, 'file size : ${fileSize / 1000} kb');
-        //
-        //         final directory = await getApplicationDocumentsDirectory();
-        //         final name = basename(image.path);
-        //         final imageFile = File('${directory.path}/$name');
-        //         final newImage = await File(image.path).copy(imageFile.path);
-        //
-        //         newImageUrl = await FirestorageHelper.uploadFile(
-        //             FirestorageHelper.AD_CAMPAIGN_IMAGES,
-        //             StringUtils.getRandomString(28),
-        //             newImage);
-        //
-        //         widget.advert.imageUrls.add(newImageUrl);
-        //         setState(() {
-        //           FirestoreHelper.pushAdvert(widget.advert);
-        //         });
-        //       },
-        //     ),
-        //     Padding(
-        //       padding: const EdgeInsets.only(left: 10.0),
-        //       child: SizedBox.fromSize(
-        //         size: const Size(56, 56),
-        //         child: ClipOval(
-        //           child: Material(
-        //             color: Colors.redAccent,
-        //             child: InkWell(
-        //               splashColor: Colors.red,
-        //               onTap: () {
-        //                 // splashColorDialog(
-        //                 //     context: context,
-        //                 //     builder: (BuildContext context) {
-        //                 //       return AlertDialog(
-        //                 //         title: const Text('photos'),
-        //                 //         content: photosListDialog(),
-        //                 //       );
-        //                 //     });
-        //               },
-        //               child: const Column(
-        //                 mainAxisAlignment: MainAxisAlignment.center,
-        //                 children: <Widget>[
-        //                   Icon(Icons.delete_forever),
-        //                 ],
-        //               ),
-        //             ),
-        //           ),
-        //         ),
-        //       ),
-        //     )
-        //   ],
-        // ),
-        // const SizedBox(height: 24),
         TextFieldWidget(
           label: 'title *',
-          text: widget.advert.name,
+          text: widget.advert.title,
           onChanged: (text) =>
-          widget.advert = widget.advert.copyWith(name: text),
+          widget.advert = widget.advert.copyWith(title: text),
         ),
         const SizedBox(height: 24),
         TextFieldWidget(
@@ -196,39 +132,192 @@ class _AdvertAddEditScreenState extends State<AdvertAddEditScreen> {
         const SizedBox(height: 24),
         dateTimeContainer(context, 'end'),
         const SizedBox(height: 24),
-        // TextFieldWidget(
-        //   label: 'views',
-        //   text: widget.advert.views.toString(),
-        //   onChanged: (value) {},
-        // ),
-        // const SizedBox(height: 12),
-        // TextFieldWidget(
-        //   label: 'clicks',
-        //   text: widget.advert.clickCount.toString(),
-        //   onChanged: (value) {},
-        // ),
         const SizedBox(height: 12),
-        UserPreferences.myUser.clearanceLevel>= Constants.MANAGER_LEVEL ? Row(
-          children: <Widget>[
-            const Text(
-              'active : ',
-              style: TextStyle(fontSize: 17.0),
-            ), //Text
-            const SizedBox(width: 10), //SizedBox
-            Checkbox(
-              value: widget.advert.isActive,
-              onChanged: (value) {
-                setState(() {
-                  widget.advert =
-                      widget.advert.copyWith(isActive: value);
-                });
-              },
-            ), //Checkbox
-          ], //<Widget>[]
-        ) : const SizedBox(height: 12),
+        UserPreferences.myUser.clearanceLevel >= Constants.MANAGER_LEVEL ? Column(
+          children: [
+            Row(
+              children: <Widget>[
+                const Text(
+                  'paused : ',
+                  style: TextStyle(fontSize: 17.0),
+                ),
+                const SizedBox(width: 10),
+                Checkbox(
+                  value: widget.advert.isPaused,
+                  onChanged: (value) {
+                    bool isPaused = value!;
 
+                    FirestoreHelper.pullAdCampaignByAdvertId(widget.advert.id).then((res) {
+                      if(res.docs.isNotEmpty){
+                        DocumentSnapshot document = res.docs[0];
+                        Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                        AdCampaign adCampaign = Fresh.freshAdCampaignMap(data, true);
+
+                        if(isPaused){
+                          adCampaign = adCampaign.copyWith(isActive: false);
+                          Logx.ist(_TAG, 'advert is paused and campaign is not active');
+                        } else {
+                          adCampaign = adCampaign.copyWith(isActive: true);
+                          Logx.ist(_TAG, 'advert is unpaused and campaign is active');
+                        }
+                        FirestoreHelper.pushAdCampaign(adCampaign);
+
+                      } else {
+                        Logx.ist(_TAG, 'ad campaign not found for ${widget.advert.id}');
+
+                        if(!isPaused){
+                          AdCampaign adCampaign = Dummy.getDummyAdCampaign()
+                              .copyWith(
+                              name: widget.advert.title,
+                              imageUrls: widget.advert.imageUrls,
+                              clickCount: widget.advert.clickCount,
+                              views: widget.advert.views,
+                              linkUrl: widget.advert.linkUrl,
+                              isActive: false,
+                              isStorySize: true,
+
+                              advertId: widget.advert.id,
+                              isPurchased: widget.advert.isCompleted && widget.advert.isSuccess,
+
+                              startTime: widget.advert.startTime,
+                              endTime: widget.advert.endTime);
+
+                          FirestoreHelper.pushAdCampaign(adCampaign);
+                        } else {
+                          // nothing to do
+                          Logx.d(_TAG, 'no ad campaign found and active is false');
+                        }
+                      }
+                    });
+
+                    setState(() {
+                      widget.advert =
+                          widget.advert.copyWith(isPaused: value);
+                    });
+
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: <Widget>[
+                const Text(
+                  'active : ',
+                  style: TextStyle(fontSize: 17.0),
+                ), //Text
+                const SizedBox(width: 10), //SizedBox
+                Checkbox(
+                  value: widget.advert.isActive,
+                  onChanged: (value) {
+
+                    FirestoreHelper.pullAdCampaignByAdvertId(widget.advert.id).then((res) {
+                      if(res.docs.isNotEmpty){
+                        DocumentSnapshot document = res.docs[0];
+                        Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                        AdCampaign adCampaign = Fresh.freshAdCampaignMap(data, true);
+                        adCampaign = adCampaign.copyWith(isActive: value);
+                        FirestoreHelper.pushAdCampaign(adCampaign);
+
+                        Logx.ist(_TAG, 'ad campaign is active $value');
+                      } else {
+                        Logx.ist(_TAG, 'ad campaign not found for ${widget.advert.id}');
+
+                        if(value!){
+                          AdCampaign adCampaign = Dummy.getDummyAdCampaign()
+                              .copyWith(
+                              name: widget.advert.title,
+                              imageUrls: widget.advert.imageUrls,
+                              clickCount: widget.advert.clickCount,
+                              views: widget.advert.views,
+                              linkUrl: widget.advert.linkUrl,
+                              isActive: value,
+                              isStorySize: true,
+
+                              advertId: widget.advert.id,
+                              isPurchased: widget.advert.isCompleted && widget.advert.isSuccess,
+
+                              startTime: widget.advert.startTime,
+                              endTime: widget.advert.endTime);
+
+                          FirestoreHelper.pushAdCampaign(adCampaign);
+                        } else {
+                          // nothing to do
+                          Logx.d(_TAG, 'no ad campaign found and active is false');
+                        }
+                      }
+                    });
+
+                    setState(() {
+                      widget.advert =
+                          widget.advert.copyWith(isActive: value);
+                      FirestoreHelper.pushAdvert(widget.advert);
+                      Logx.ist(_TAG, 'advert is updated');
+                    });
+                  },
+                ), //Checkbox
+              ], //<Widget>[]
+            ),
+            const SizedBox(height: 12),
+            TextFieldWidget(
+              label: 'result',
+              text: widget.advert.result,
+              maxLines: 3,
+              onChanged: (text) {},
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: <Widget>[
+                const Text(
+                  'success : ',
+                  style: TextStyle(fontSize: 17.0),
+                ), //Text
+                const SizedBox(width: 10),
+                Checkbox(
+                  value: widget.advert.isSuccess,
+                  onChanged: (value) {
+                    if(UserPreferences.myUser.clearanceLevel==Constants.ADMIN_LEVEL){
+                      setState(() {
+                        widget.advert = widget.advert.copyWith(isSuccess: value);
+                      });
+                      FirestoreHelper.pushAdvert(widget.advert);
+                      Logx.ist(_TAG, 'admin: success is set to $value');
+                    } else {
+                      Logx.ist(_TAG,'success value cannot be changed');
+                    }
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: <Widget>[
+                const Text(
+                  'completed : ',
+                  style: TextStyle(fontSize: 17.0),
+                ),
+                const SizedBox(width: 10),
+                Checkbox(
+                  value: widget.advert.isCompleted,
+                  onChanged: (value) {
+                    if(UserPreferences.myUser.clearanceLevel==Constants.ADMIN_LEVEL){
+                      setState(() {
+                        widget.advert = widget.advert.copyWith(isCompleted: value);
+                      });
+                      FirestoreHelper.pushAdvert(widget.advert);
+                      Logx.ist(_TAG, 'admin: completed is set to $value');
+                    } else {
+                      Logx.ist(_TAG,'completed value cannot be changed');
+                    }
+                  },
+                ),
+              ],
+            ),
+
+          ],
+        ) : const SizedBox(height: 12),
         const SizedBox(height: 24),
-        ButtonWidget(
+        widget.advert.isSuccess ? ButtonWidget(
           text: 'save',
           onClicked: () {
             Navigator.of(context).pop();
@@ -236,9 +325,41 @@ class _AdvertAddEditScreenState extends State<AdvertAddEditScreen> {
             Advert freshAdvert = Fresh.freshAdvert(widget.advert);
             FirestoreHelper.pushAdvert(freshAdvert);
           },
+        ) : ButtonWidget(
+          text: 'purchase',
+          onClicked: () async {
+
+            int timeDiff = widget.advert.endTime - widget.advert.startTime;
+            double days = (timeDiff/DateTimeUtils.millisecondsDay);
+
+            double totalAmount = days * 10;
+
+            double igst = totalAmount * Constants.igstPercent;
+            double subTotal = totalAmount - igst;
+            double bookingFee = totalAmount * 0;
+            double grandTotal = subTotal + igst + bookingFee;
+
+            widget.advert = widget.advert.copyWith(
+                igst: igst,
+                subTotal: subTotal,
+                bookingFee: bookingFee,
+                total: grandTotal);
+
+            Advert freshAdvert = Fresh.freshAdvert(widget.advert);
+            await FirestoreHelper.pushAdvert(freshAdvert);
+
+            // navigate to payment page
+            await Navigator.of(context).push (
+              MaterialPageRoute(
+                  builder: (context) =>
+                      AdvertCheckoutScreen(
+                        advert: widget.advert,
+                      )),
+            );
+          },
         ),
         const SizedBox(height: 24),
-        ButtonWidget(
+        widget.task == 'manage' ? ButtonWidget(
           text: 'delete',
           onClicked: () {
             for (String imageUrl in widget.advert.imageUrls) {
@@ -250,7 +371,7 @@ class _AdvertAddEditScreenState extends State<AdvertAddEditScreen> {
             Logx.ist(_TAG, 'advert deleted');
             Navigator.of(context).pop();
           },
-        ),
+        ) : const SizedBox(),
         const SizedBox(height: 10),
       ],
     );
@@ -297,8 +418,12 @@ class _AdvertAddEditScreenState extends State<AdvertAddEditScreen> {
               minimumSize: const Size(50, 50),
             ),
             onPressed: () {
-              _selectDate(context, dateTime, type);
-            },
+              if(widget.advert.isSuccess && widget.advert.isCompleted){
+                Logx.ilt(_TAG, '$type date and time cannot be changed after purchase');
+              } else {
+                _selectDate(context, dateTime, type);
+              }
+              },
             child: Text('$type date & time',
               style: const TextStyle(color: Constants.darkPrimary),),
           ),
@@ -347,59 +472,4 @@ class _AdvertAddEditScreenState extends State<AdvertAddEditScreen> {
     });
     return sTimeOfDay;
   }
-
-  // Widget photosListDialog() {
-  //   return SingleChildScrollView(
-  //     child: SizedBox(
-  //       height: 300.0, // Change as per your requirement
-  //       width: 300.0, // Change as per your requirement
-  //       child: ListView.builder(
-  //         shrinkWrap: true,
-  //         itemCount: widget.advert.imageUrls.length,
-  //         itemBuilder: (BuildContext context, int index) {
-  //           return Row(
-  //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //             children: [
-  //               Padding(
-  //                 padding:
-  //                 const EdgeInsets.symmetric(horizontal: 5.0, vertical: 1),
-  //                 child: ClipRRect(
-  //                   borderRadius: BorderRadius.circular(8),
-  //                   child: Image.network(widget.advert.imageUrls[index],
-  //                       width: 100, height: 100, fit: BoxFit.fill),
-  //                 ),
-  //               ),
-  //               SizedBox.fromSize(
-  //                 size: const Size(50, 50),
-  //                 child: ClipOval(
-  //                   child: Material(
-  //                     color: Colors.redAccent,
-  //                     child: InkWell(
-  //                       splashColor: Colors.red,
-  //                       onTap: () {
-  //                         FirestorageHelper.deleteFile(widget.advert.imageUrls[index]);
-  //                         widget.advert.imageUrls.removeAt(index);
-  //
-  //                         FirestoreHelper.pushAdvert(widget.advert);
-  //
-  //                         Navigator.of(context).pop();
-  //                         setState(() {});
-  //                       },
-  //                       child: const Column(
-  //                         mainAxisAlignment: MainAxisAlignment.center,
-  //                         children: <Widget>[
-  //                           Icon(Icons.delete_forever),
-  //                         ],
-  //                       ),
-  //                     ),
-  //                   ),
-  //                 ),
-  //               ),
-  //             ],
-  //           );
-  //         },
-  //       ),
-  //     ),
-  //   );
-  // }
 }

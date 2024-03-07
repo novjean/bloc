@@ -467,9 +467,7 @@ class _MainScreenState extends State<MainScreen> {
       case 'advertisement':
         {
           if(!kIsWeb){
-            Navigator.of(context).push(
-              MaterialPageRoute(builder: (ctx) => AdvertScreen()),
-            );
+            GoRouter.of(context).pushNamed(RouteConstants.advertiseRouteName);
           } else {
             DialogUtils.showDownloadAppDialog(context, DialogUtils.downloadDefault);
           }

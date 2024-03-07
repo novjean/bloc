@@ -204,6 +204,14 @@ class FirestoreHelper {
         .get();
   }
 
+  static pullAdCampaignByAdvertId(String advertId) {
+    return FirebaseFirestore.instance
+        .collection(AD_CAMPAIGNS)
+        .where('advertId', isEqualTo: advertId)
+        .get();
+  }
+
+
   static pullAdCampaignsActive() {
     return FirebaseFirestore.instance
         .collection(AD_CAMPAIGNS)
@@ -240,7 +248,7 @@ class FirestoreHelper {
   }
 
   /** adverts **/
-  static void pushAdvert(Advert advert) async {
+  static Future<void> pushAdvert(Advert advert) async {
     try {
       await FirebaseFirestore.instance
           .collection(ADVERTS)
@@ -255,10 +263,17 @@ class FirestoreHelper {
     }
   }
 
+  static getAdverts() {
+    return FirebaseFirestore.instance
+        .collection(ADVERTS)
+        .orderBy('createdAt', descending: true)
+        .snapshots();
+  }
+
   static  Stream<QuerySnapshot> getAdvertsByUser(String userId) {
     return FirebaseFirestore.instance
         .collection(ADVERTS)
-        .where('ownerId', isEqualTo: 'userId')
+        .where('userId', isEqualTo: userId)
         .orderBy('startTime', descending: false)
         .snapshots();
   }
@@ -2872,4 +2887,5 @@ class FirestoreHelper {
   static void deleteUserPhoto(String docId) {
     FirebaseFirestore.instance.collection(USER_PHOTOS).doc(docId).delete();
   }
+
 }

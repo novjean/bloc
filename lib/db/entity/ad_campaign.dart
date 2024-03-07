@@ -10,6 +10,11 @@ class AdCampaign{
   bool isStorySize;
   bool isPartyAd;
   String partyId;
+
+  bool isPurchased;
+  String advertId;
+
+  int startTime;
   int endTime;
 
 //<editor-fold desc="Data Methods">
@@ -24,6 +29,9 @@ class AdCampaign{
     required this.isStorySize,
     required this.isPartyAd,
     required this.partyId,
+    required this.isPurchased,
+    required this.advertId,
+    required this.startTime,
     required this.endTime,
   });
 
@@ -42,6 +50,9 @@ class AdCampaign{
           isStorySize == other.isStorySize &&
           isPartyAd == other.isPartyAd &&
           partyId == other.partyId &&
+          isPurchased == other.isPurchased &&
+          advertId == other.advertId &&
+          startTime == other.startTime &&
           endTime == other.endTime);
 
   @override
@@ -56,6 +67,9 @@ class AdCampaign{
       isStorySize.hashCode ^
       isPartyAd.hashCode ^
       partyId.hashCode ^
+      isPurchased.hashCode ^
+      advertId.hashCode ^
+      startTime.hashCode ^
       endTime.hashCode;
 
   @override
@@ -71,6 +85,9 @@ class AdCampaign{
         ' isStorySize: $isStorySize,' +
         ' isPartyAd: $isPartyAd,' +
         ' partyId: $partyId,' +
+        ' isPurchased: $isPurchased,' +
+        ' advertId: $advertId,' +
+        ' startTime: $startTime,' +
         ' endTime: $endTime,' +
         '}';
   }
@@ -86,6 +103,9 @@ class AdCampaign{
     bool? isStorySize,
     bool? isPartyAd,
     String? partyId,
+    bool? isPurchased,
+    String? advertId,
+    int? startTime,
     int? endTime,
   }) {
     return AdCampaign(
@@ -99,6 +119,9 @@ class AdCampaign{
       isStorySize: isStorySize ?? this.isStorySize,
       isPartyAd: isPartyAd ?? this.isPartyAd,
       partyId: partyId ?? this.partyId,
+      isPurchased: isPurchased ?? this.isPurchased,
+      advertId: advertId ?? this.advertId,
+      startTime: startTime ?? this.startTime,
       endTime: endTime ?? this.endTime,
     );
   }
@@ -115,6 +138,9 @@ class AdCampaign{
       'isStorySize': this.isStorySize,
       'isPartyAd': this.isPartyAd,
       'partyId': this.partyId,
+      'isPurchased': this.isPurchased,
+      'advertId': this.advertId,
+      'startTime': this.startTime,
       'endTime': this.endTime,
     };
   }
@@ -131,6 +157,9 @@ class AdCampaign{
       isStorySize: map['isStorySize'] as bool,
       isPartyAd: map['isPartyAd'] as bool,
       partyId: map['partyId'] as String,
+      isPurchased: map['isPurchased'] as bool,
+      advertId: map['advertId'] as String,
+      startTime: map['startTime'] as int,
       endTime: map['endTime'] as int,
     );
   }

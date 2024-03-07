@@ -1,4 +1,5 @@
 import 'package:bloc/screens/account_screen.dart';
+import 'package:bloc/screens/advertise/advert_screen.dart';
 import 'package:bloc/screens/bloc/bloc_menu_screen.dart';
 import 'package:bloc/screens/box_office/box_office_screen.dart';
 import 'package:bloc/screens/main_screen.dart';
@@ -282,7 +283,7 @@ class BlocRouter {
           name: RouteConstants.boxOfficeRouteName,
           path: '/box_office',
           pageBuilder: (context, state) {
-            return MaterialPage(child: BoxOfficeScreen());
+            return const MaterialPage(child: BoxOfficeScreen());
           },
         ),
 
@@ -290,7 +291,15 @@ class BlocRouter {
           name: RouteConstants.reservationRouteName,
           path: '/reservation',
           pageBuilder: (context, state) {
-            return MaterialPage(child: ReservationScreen());
+            return const MaterialPage(child: ReservationScreen());
+          },
+        ),
+
+        GoRoute(
+          name: RouteConstants.advertiseRouteName,
+          path: '/advertise',
+          pageBuilder: (context, state) {
+            return MaterialPage(child: AdvertScreen());
           },
         ),
 

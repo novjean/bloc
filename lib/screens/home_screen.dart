@@ -13,6 +13,7 @@ import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../db/entity/ad_campaign.dart';
+import '../db/entity/advert.dart';
 import '../db/entity/bloc.dart';
 import '../db/entity/guest_wifi.dart';
 import '../db/entity/party.dart';
@@ -79,7 +80,13 @@ class _HomeScreenState extends State<HomeScreen> {
           Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
           AdCampaign tempAd = Fresh.freshAdCampaignMap(data, false);
 
-          if(tempAd.isStorySize){
+          if(tempAd.advertId.isNotEmpty){
+            if (Timestamp.now().millisecondsSinceEpoch > tempAd.startTime
+                && Timestamp.now().millisecondsSinceEpoch < tempAd.endTime
+            ){
+              adCampaigns.add(tempAd);
+            }
+          } else if(tempAd.isStorySize){
             if (Timestamp.now().millisecondsSinceEpoch < tempAd.endTime){
               adCampaigns.add(tempAd);
             }
@@ -100,10 +107,10 @@ class _HomeScreenState extends State<HomeScreen> {
           } else {
             if(UserPreferences.isUserLoggedIn()){
               int timeGap = Timestamp.now().millisecondsSinceEpoch - UserPreferences.myUser.lastSeenAt;
-              // if(timeGap < 3000){
-              //   _showAdDialog(ad, 600000);
-              // }
-              _showAdDialog(ad, 600000);
+              if(timeGap < 3000){
+                _showAdDialog(ad, 300000);
+              }
+              // _showAdDialog(ad, 300000);
             } else {
               _showAdDialog(ad, 60000);
             }

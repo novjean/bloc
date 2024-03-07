@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delayed_display/delayed_display.dart';
 import 'package:flutter/material.dart';
 
+import '../../db/entity/ad_campaign.dart';
 import '../../db/entity/advert.dart';
 import '../../db/entity/bloc.dart';
 import '../../db/entity/bloc_service.dart';
@@ -15,9 +16,11 @@ import '../../helpers/dummy.dart';
 import '../../helpers/firestore_helper.dart';
 import '../../helpers/fresh.dart';
 import '../../screens/advertise/advert_add_edit_screen.dart';
+import '../../screens/manager/adverts/advert_checkout_screen.dart';
 import '../../screens/manager/organizers/organizer_party_add_edit_screen.dart';
 import '../../screens/organizer/organizer_party_sales_screen.dart';
 import '../../screens/organizer/organizer_party_tickets_screen.dart';
+import '../../utils/logx.dart';
 
 class AdvertBanner extends StatefulWidget {
   Advert advert;
@@ -34,16 +37,28 @@ class AdvertBanner extends StatefulWidget {
 class _AdvertBannerState extends State<AdvertBanner> {
   static const String _TAG = 'AdvertBanner';
 
-  late BlocService mBlocService;
-  var _isBlocServiceLoading = true;
-
-  late Bloc mBloc;
-  var _isBlocLoading = true;
-
-  PartyInterest mPartyInterest = Dummy.getDummyPartyInterest();
+  late AdCampaign mAdCampaign;
+  bool _isAdCampaignLoading = true;
 
   @override
   void initState() {
+    FirestoreHelper.pullAdCampaignByAdvertId(widget.advert.id).then((res) {
+      if(res.docs.isNotEmpty){
+        DocumentSnapshot document = res.docs[0];
+        Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+
+        setState(() {
+          mAdCampaign = Fresh.freshAdCampaignMap(data, true);
+          _isAdCampaignLoading = false;
+        });
+
+        Logx.d(_TAG, 'ad campaign is found');
+      } else {
+        Logx.d(_TAG, 'ad campaign not found for ${widget.advert.id}');
+      }
+    });
+
+
     super.initState();
   }
 
@@ -77,7 +92,7 @@ class _AdvertBannerState extends State<AdvertBanner> {
                         children: [
                           Padding(
                             padding: const EdgeInsets.only(left: 5.0),
-                            child: Text('${widget.advert.name.toLowerCase()}',
+                            child: Text(widget.advert.title.toLowerCase(),
                               maxLines: 2,
                               style: const TextStyle(
                                   color: Colors.black,
@@ -86,8 +101,11 @@ class _AdvertBannerState extends State<AdvertBanner> {
                                   fontSize: 19,
                                   fontWeight: FontWeight.bold),),
                           ),
-                          Text('status: ${widget.advert.isActive ? 'live':'pending approval'}',
-                              style: const TextStyle(fontSize: 16)),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 5.0),
+                            child: Text('status: ${widget.advert.isActive ? 'live':'pending approval'}',
+                                style: const TextStyle(fontSize: 16)),
+                          ),
                           Padding(
                             padding: const EdgeInsets.only(left: 5.0),
                             child: Text(
@@ -96,17 +114,14 @@ class _AdvertBannerState extends State<AdvertBanner> {
                             ),
                           ),
                           const Spacer(),
-                          // Text(widget.advert.isPayoutComplete ? 'payout complete' : '',
-                          //   style: const TextStyle(backgroundColor: Constants.primary),),
-
-                          Row(
+                          _isAdCampaignLoading ? const SizedBox() : Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               Padding(
                                 padding: const EdgeInsets.only(right: 5, bottom: 1),
                                 child: DelayedDisplay(
                                   delay: const Duration(seconds: 1),
-                                  child: Text('${widget.advert.views} 👁️',
+                                  child: Text('${mAdCampaign.views} 👁️',
                                     style: const TextStyle(
                                       color: Colors.black,
                                     ),
@@ -114,8 +129,9 @@ class _AdvertBannerState extends State<AdvertBanner> {
                                 ),
                               ),
                             ],
-                          )
-                          // _displayTicketsSalesRow()
+                          ),
+                          widget.advert.isCompleted && widget.advert.isSuccess ?
+                          _displayPauseEditRow() : _displayPurchaseEditRow()
                         ],
                       ),
                     ),
@@ -166,7 +182,96 @@ class _AdvertBannerState extends State<AdvertBanner> {
     );
   }
 
-  _displayTicketsSalesRow() {
+  _displayPauseEditRow() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        Expanded(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 5),
+              height: 60,
+              child: ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Constants.background,
+                  foregroundColor: Constants.primary,
+                  shadowColor: Colors.white30,
+                  minimumSize: const Size.fromHeight(60),
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(10),
+                        topRight: Radius.circular(10)),
+                  ),
+                  elevation: 3,
+                ),
+                label: Text(
+                  widget.advert.isPaused ? 'play' : 'pause',
+                  style: const TextStyle(fontSize: 18),
+                ),
+                icon: Icon(
+                  widget.advert.isPaused ? Icons.play_arrow : Icons.pause,
+                  size: 24.0,
+                ),
+                onPressed: () {
+                  if(widget.advert.isPaused){
+                    // play
+                    setState(() {
+                      widget.advert = widget.advert.copyWith(isPaused: false);
+                    });
+                    FirestoreHelper.pushAdvert(widget.advert);
+                    Logx.ilt(_TAG, 'ad is live now!');
+                  } else {
+                    // pause
+                    setState(() {
+                      widget.advert = widget.advert.copyWith(isPaused: true);
+                    });
+                    FirestoreHelper.pushAdvert(widget.advert);
+                    Logx.ilt(_TAG, 'ad is paused!');
+                  }
+                },
+              ),
+            )),
+        Expanded(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 5),
+              height: 60,
+              child: ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Constants.background,
+                  foregroundColor: Constants.primary,
+                  shadowColor: Colors.white30,
+                  minimumSize: const Size.fromHeight(60),
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(10),
+                        topRight: Radius.circular(10)),
+                  ),
+                  elevation: 3,
+                ),
+                label: const Text(
+                  'edit',
+                  style: TextStyle(fontSize: 18),
+                ),
+                icon: const Icon(
+                  Icons.edit,
+                  size: 24.0,
+                ),
+                onPressed: () async {
+                  await Navigator.of(context).push(
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            AdvertAddEditScreen(
+                              advert: widget.advert,
+                              task: 'edit',
+                            )),
+                  );
+                },
+              ),
+            )),
+      ],
+    );
+  }
+
+  _displayPurchaseEditRow() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
@@ -188,17 +293,39 @@ class _AdvertBannerState extends State<AdvertBanner> {
                   elevation: 3,
                 ),
                 label: const Text(
-                  'tickets',
+                  'buy',
                   style: TextStyle(fontSize: 18),
                 ),
-                icon: const Icon(
-                  Icons.star,
+                icon: Icon(
+                  Icons.shopping_cart_outlined,
                   size: 24.0,
                 ),
-                onPressed: () {
-                  // Navigator.of(context).push(MaterialPageRoute(
-                  //     builder: (ctx) =>
-                  //         OrganizerPartyTicketsScreen(party: widget.advert)));
+                onPressed: () async {
+                  int timeDiff = widget.advert.endTime - widget.advert.startTime;
+                  double days = (timeDiff/DateTimeUtils.millisecondsDay);
+
+                  double totalAmount = days * 10;
+
+                  double igst = totalAmount * Constants.igstPercent;
+                  double subTotal = totalAmount - igst;
+                  double bookingFee = totalAmount * 0;
+                  double grandTotal = subTotal + igst + bookingFee;
+
+                  widget.advert = widget.advert.copyWith(
+                      igst: igst,
+                      subTotal: subTotal,
+                      bookingFee: bookingFee,
+                      total: grandTotal);
+                  Advert freshAdvert = Fresh.freshAdvert(widget.advert);
+                  await FirestoreHelper.pushAdvert(freshAdvert);
+
+                  await Navigator.of(context).push(
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            AdvertCheckoutScreen(
+                              advert: widget.advert,
+                            )),
+                  );
                 },
               ),
             )),
@@ -220,21 +347,27 @@ class _AdvertBannerState extends State<AdvertBanner> {
                   elevation: 3,
                 ),
                 label: const Text(
-                  'sales',
+                  'edit',
                   style: TextStyle(fontSize: 18),
                 ),
                 icon: const Icon(
-                  Icons.money,
+                  Icons.edit,
                   size: 24.0,
                 ),
-                onPressed: () {
-                  // Navigator.of(context).push(MaterialPageRoute(
-                  //     builder: (ctx) =>
-                  //         OrganizerPartySalesScreen(party: widget.advert)));
+                onPressed: () async {
+                  await Navigator.of(context).push(
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            AdvertAddEditScreen(
+                              advert: widget.advert,
+                              task: 'edit',
+                            )),
+                  );
                 },
               ),
             )),
       ],
     );
   }
+
 }

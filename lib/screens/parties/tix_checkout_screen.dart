@@ -4,7 +4,6 @@ import 'package:bloc/db/entity/tix_tier_item.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:bloc/main.dart';
 import 'package:bloc/screens/parties/tix_web_checkout_screen.dart';
-import 'package:bloc/services/phone_pe_api_service.dart';
 import 'package:bloc/utils/number_utils.dart';
 import 'package:bloc/utils/string_utils.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';

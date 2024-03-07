@@ -260,6 +260,26 @@ class Fresh {
       Logx.em(_TAG, 'adCampaign partyId not exist for id: ${adCampaign.id}');
       isModelChanged = true;
     }
+
+    try {
+      adCampaign = adCampaign.copyWith(isPurchased: map['isPurchased'] as bool);
+    } catch (e) {
+      Logx.em(_TAG, 'adCampaign isPurchased not exist for id: ${adCampaign.id}');
+      isModelChanged = true;
+    }
+    try {
+      adCampaign = adCampaign.copyWith(advertId: map['advertId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'adCampaign advertId not exist for id: ${adCampaign.id}');
+      isModelChanged = true;
+    }
+
+    try {
+      adCampaign = adCampaign.copyWith(startTime: map['startTime'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'adCampaign startTime not exist for id: ${adCampaign.id}');
+      isModelChanged = true;
+    }
     try {
       adCampaign = adCampaign.copyWith(endTime: map['endTime'] as int);
     } catch (e) {
@@ -331,6 +351,23 @@ class Fresh {
     } catch (e) {
       Logx.em(_TAG, 'adCampaign partyId not exist for id: ${adCampaign.id}');
     }
+
+    try {
+      fresh = fresh.copyWith(isPurchased: adCampaign.isPurchased);
+    } catch (e) {
+      Logx.em(_TAG, 'adCampaign isPurchased not exist for id: ${adCampaign.id}');
+    }
+    try {
+      fresh = fresh.copyWith(advertId: adCampaign.advertId);
+    } catch (e) {
+      Logx.em(_TAG, 'adCampaign advertId not exist for id: ${adCampaign.id}');
+    }
+
+    try {
+      fresh = fresh.copyWith(startTime: adCampaign.startTime);
+    } catch (e) {
+      Logx.em(_TAG, 'adCampaign startTime not exist for id: ${adCampaign.id}');
+    }
     try {
       fresh = fresh.copyWith(endTime: adCampaign.endTime);
     } catch (e) {
@@ -352,11 +389,37 @@ class Fresh {
       Logx.em(_TAG, 'advert id not exist');
     }
     try {
-      advert = advert.copyWith(name: map['name'] as String);
+      advert = advert.copyWith(title: map['title'] as String);
     } catch (e) {
-      Logx.em(_TAG, 'advert name not exist for id: ${advert.id}');
+      Logx.em(_TAG, 'advert title not exist for id: ${advert.id}');
       isModelChanged = true;
     }
+    try {
+      advert = advert.copyWith(userId: map['userId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'advert userId not exist for id: ${advert.id}');
+      isModelChanged = true;
+    }
+
+    try {
+      advert = advert.copyWith(userName: map['userName'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'advert userName not exist for id: ${advert.id}');
+      isModelChanged = true;
+    }
+    try {
+      advert = advert.copyWith(userPhone: map['userPhone'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'advert userPhone not exist for id: ${advert.id}');
+      isModelChanged = true;
+    }
+    try {
+      advert = advert.copyWith(userEmail: map['userEmail'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'advert userEmail not exist for id: ${advert.id}');
+      isModelChanged = true;
+    }
+
     try {
       advert = advert.copyWith(imageUrls: List<String>.from(map['imageUrls']));
     } catch (e) {
@@ -388,7 +451,19 @@ class Fresh {
       Logx.em(_TAG, 'advert isActive not exist for id: ${advert.id}');
       isModelChanged = true;
     }
+    try {
+      advert = advert.copyWith(isPaused: map['isPaused'] as bool);
+    } catch (e) {
+      Logx.em(_TAG, 'advert isPaused not exist for id: ${advert.id}');
+      isModelChanged = true;
+    }
 
+    try {
+      advert = advert.copyWith(createdAt: map['createdAt'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'advert createdAt not exist for id: ${advert.id}');
+      isModelChanged = true;
+    }
     try {
       advert = advert.copyWith(startTime: map['startTime'] as int);
     } catch (e) {
@@ -399,6 +474,69 @@ class Fresh {
       advert = advert.copyWith(endTime: map['endTime'] as int);
     } catch (e) {
       Logx.em(_TAG, 'advert endTime not exist for id: ${advert.id}');
+      isModelChanged = true;
+    }
+
+    try {
+      advert = advert.copyWith(isSuccess: map['isSuccess'] as bool);
+    } catch (e) {
+      Logx.em(_TAG, 'advert isSuccess not exist for id: ${advert.id}');
+      isModelChanged = true;
+    }
+    try {
+      advert = advert.copyWith(isCompleted: map['isCompleted'] as bool);
+    } catch (e) {
+      Logx.em(_TAG, 'advert isCompleted not exist for id: ${advert.id}');
+      isModelChanged = true;
+    }
+
+    try {
+      advert = advert.copyWith(merchantTransactionId: map['merchantTransactionId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'advert merchantTransactionId not exist for id: ${advert.id}');
+      isModelChanged = true;
+    }
+    try {
+      advert = advert.copyWith(transactionId: map['transactionId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'advert transactionId not exist for id: ${advert.id}');
+      isModelChanged = true;
+    }
+    try {
+      advert = advert.copyWith(transactionResponseCode: map['transactionResponseCode'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'advert transactionResponseCode not exist for id: ${advert.id}');
+      isModelChanged = true;
+    }
+    try {
+      advert = advert.copyWith(result: map['result'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'advert result not exist  for id: ${advert.id}');
+      isModelChanged = true;
+    }
+
+    try {
+      advert = advert.copyWith(igst: map['igst'] as double);
+    } catch (e) {
+      Logx.em(_TAG, 'advert igst not exist for id: ${advert.id}');
+      isModelChanged = true;
+    }
+    try {
+      advert = advert.copyWith(subTotal: map['subTotal'] as double);
+    } catch (e) {
+      Logx.em(_TAG, 'advert subTotal not exist for id: ${advert.id}');
+      isModelChanged = true;
+    }
+    try {
+      advert = advert.copyWith(bookingFee: map['bookingFee'] as double);
+    } catch (e) {
+      Logx.em(_TAG, 'advert bookingFee not exist for id: ${advert.id}');
+      isModelChanged = true;
+    }
+    try {
+      advert = advert.copyWith(total: map['total'] as double);
+    } catch (e) {
+      Logx.em(_TAG, 'advert total not exist for id: ${advert.id}');
       isModelChanged = true;
     }
 
@@ -419,10 +557,32 @@ class Fresh {
       Logx.em(_TAG, 'advert id not exist');
     }
     try {
-      fresh = fresh.copyWith(name: advert.name);
+      fresh = fresh.copyWith(title: advert.title);
     } catch (e) {
-      Logx.em(_TAG, 'advert name not exist for id: ${advert.id}');
+      Logx.em(_TAG, 'advert title not exist for id: ${advert.id}');
     }
+    try {
+      fresh = fresh.copyWith(userId: advert.userId);
+    } catch (e) {
+      Logx.em(_TAG, 'advert userId not exist for id: ${advert.id}');
+    }
+
+    try {
+      fresh = fresh.copyWith(userName: advert.userName);
+    } catch (e) {
+      Logx.em(_TAG, 'advert userName not exist for id: ${advert.id}');
+    }
+    try {
+      fresh = fresh.copyWith(userPhone: advert.userPhone);
+    } catch (e) {
+      Logx.em(_TAG, 'advert userPhone not exist for id: ${advert.id}');
+    }
+    try {
+      fresh = fresh.copyWith(userEmail: advert.userEmail);
+    } catch (e) {
+      Logx.em(_TAG, 'advert userEmail not exist for id: ${advert.id}');
+    }
+
     try {
       fresh = fresh.copyWith(imageUrls: advert.imageUrls);
     } catch (e) {
@@ -448,7 +608,17 @@ class Fresh {
     } catch (e) {
       Logx.em(_TAG, 'advert isActive not exist for id: ${advert.id}');
     }
+    try {
+      fresh = fresh.copyWith(isPaused: advert.isPaused);
+    } catch (e) {
+      Logx.em(_TAG, 'advert isPaused not exist for id: ${advert.id}');
+    }
 
+    try {
+      fresh = fresh.copyWith(createdAt: advert.createdAt);
+    } catch (e) {
+      Logx.em(_TAG, 'advert createdAt not exist for id: ${advert.id}');
+    }
     try {
       fresh = fresh.copyWith(startTime: advert.startTime);
     } catch (e) {
@@ -458,6 +628,59 @@ class Fresh {
       fresh = fresh.copyWith(endTime: advert.endTime);
     } catch (e) {
       Logx.em(_TAG, 'advert endTime not exist for id: ${advert.id}');
+    }
+
+    try {
+      fresh = fresh.copyWith(isSuccess: advert.isSuccess);
+    } catch (e) {
+      Logx.em(_TAG, 'advert isSuccess not exist for id: ${advert.id}');
+    }
+    try {
+      fresh = fresh.copyWith(isCompleted: advert.isCompleted);
+    } catch (e) {
+      Logx.em(_TAG, 'advert isCompleted not exist for id: ${advert.id}');
+    }
+
+    try {
+      fresh = fresh.copyWith(merchantTransactionId: advert.merchantTransactionId);
+    } catch (e) {
+      Logx.em(_TAG, 'advert merchantTransactionId not exist for id: ${advert.id}');
+    }
+    try {
+      fresh = fresh.copyWith(transactionId: advert.transactionId);
+    } catch (e) {
+      Logx.em(_TAG, 'advert transactionId not exist for id: ${advert.id}');
+    }
+    try {
+      fresh = fresh.copyWith(transactionResponseCode: advert.transactionResponseCode);
+    } catch (e) {
+      Logx.em(_TAG, 'advert transactionResponseCode not exist for id: ${advert.id}');
+    }
+    try {
+      fresh = fresh.copyWith(result: advert.result);
+    } catch (e) {
+      Logx.em(_TAG, 'advert result not exist for id: ${advert.id}');
+    }
+
+    try {
+      fresh = fresh.copyWith(igst: advert.igst);
+    } catch (e) {
+      Logx.em(_TAG, 'advert igst not exist for id: ${advert.id}');
+    }
+    try {
+      fresh = fresh.copyWith(subTotal: advert.subTotal);
+    } catch (e) {
+      Logx.em(_TAG, 'advert subTotal not exist for id: ${advert.id}');
+    }
+    try {
+      fresh = fresh.copyWith(bookingFee: advert.bookingFee);
+    } catch (e) {
+      Logx.em(_TAG, 'advert bookingFee not exist for id: ${advert.id}');
+    }
+    try {
+      fresh = fresh.copyWith(total: advert.total);
+    } catch (e) {
+      Logx.em(_TAG, 'advert total not exist for id: ${advert.id}');
     }
 
     return fresh;

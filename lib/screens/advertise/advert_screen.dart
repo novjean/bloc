@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:bloc/db/shared_preferences/user_preferences.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
@@ -9,21 +8,13 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../db/entity/advert.dart';
-import '../../db/entity/organizer.dart';
-import '../../db/entity/party.dart';
 import '../../helpers/dummy.dart';
-import '../../helpers/firestorage_helper.dart';
 import '../../helpers/fresh.dart';
 import '../../routes/route_constants.dart';
 import '../../utils/constants.dart';
-import '../../utils/file_utils.dart';
 import '../../utils/logx.dart';
-import '../../utils/number_utils.dart';
-import '../../utils/string_utils.dart';
 import '../../widgets/advert/advert_banner.dart';
 import '../../widgets/footer.dart';
-import '../../widgets/organizer/organizer_party_banner.dart';
-import '../../widgets/profile_widget.dart';
 import '../../widgets/ui/app_bar_title.dart';
 import 'advert_add_edit_screen.dart';
 
@@ -36,11 +27,6 @@ class _AdvertScreenState extends State<AdvertScreen> {
   static const String _TAG = 'AdvertScreen';
 
   List<Advert> mAdverts = [];
-
-  late Organizer mOrganizer;
-  var _isOrganizerLoading = true;
-
-  // List<Party> mParties = [];
 
   @override
   void initState() {
@@ -115,14 +101,6 @@ class _AdvertScreenState extends State<AdvertScreen> {
         )
       ],
     );
-    // : const Expanded(
-    //     child: Center(
-    //       child: Text(
-    //         'you are not an event organizer yet!',
-    //         style: TextStyle(color: Constants.primary),
-    //       ),
-    //     ),
-    //   );
   }
 
   _loadAdverts(BuildContext context) {

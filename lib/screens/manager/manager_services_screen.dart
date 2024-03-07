@@ -17,6 +17,7 @@ import 'package:flutter/material.dart';
 import '../../db/entity/bloc_service.dart';
 import '../../helpers/firestore_helper.dart';
 import 'ad_campaigns/manage_ad_campaigns_screen.dart';
+import 'adverts/manage_adverts_screen.dart';
 import 'celebrations/manage_celebrations_screen.dart';
 import 'challenges/manage_challenges_screen.dart';
 import 'configs/manage_configs_screen.dart';
@@ -112,6 +113,13 @@ class ManagerServicesScreen extends StatelessWidget {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (ctx) =>
                                 ManageAdCampaignsScreen(serviceId: blocService.id)));
+                        break;
+                      }
+                    case 'adverts':
+                      {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (ctx) =>
+                                ManageAdvertsScreen(serviceId: blocService.id)));
                         break;
                       }
                     case 'challenges':
