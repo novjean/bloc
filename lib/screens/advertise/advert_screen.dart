@@ -49,6 +49,29 @@ class _AdvertScreenState extends State<AdvertScreen> {
           },
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          await Navigator.of(context).push(
+            MaterialPageRoute(
+                builder: (context) =>
+                    AdvertAddEditScreen(
+                      advert: Dummy.getDummyAdvert(),
+                      task: 'add',
+                    )),
+          );
+        },
+        backgroundColor: Constants.primary,
+        tooltip: 'new advertisement',
+        elevation: 5,
+        splashColor: Colors.grey,
+        child: const Icon(
+          Icons.ads_click,
+          color: Constants.darkPrimary,
+          size: 29,
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+
       backgroundColor: Constants.background,
       body: _buildBody(context),
     );
@@ -60,38 +83,6 @@ class _AdvertScreenState extends State<AdvertScreen> {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         const SizedBox(height: 15),
-        // Padding(
-        //   padding: const EdgeInsets.symmetric(horizontal: 10.0),
-        //   child: Row(
-        //     mainAxisAlignment: MainAxisAlignment.end,
-        //     mainAxisSize: MainAxisSize.min,
-        //     crossAxisAlignment: CrossAxisAlignment.center,
-        //     children: [
-        //       Padding(
-        //         padding: const EdgeInsets.only(left: 10, right: 10.0),
-        //         child: Text(
-        //           'advertisements',
-        //           maxLines: 3,
-        //           style: const TextStyle(
-        //               fontWeight: FontWeight.bold,
-        //               fontSize: 24,
-        //               color: Constants.primary),
-        //         ),
-        //       ),
-        //       // Padding(
-        //       //   padding: const EdgeInsets.only(left: 10.0, right: 10),
-        //       //   child: ProfileWidget(
-        //       //     isEdit: false,
-        //       //     imagePath: ,
-        //       //     showEditIcon: false,
-        //       //     onClicked: () {
-        //       //       //nothing to do here
-        //       //     },
-        //       //   ),
-        //       // ),
-        //     ],
-        //   ),
-        // ),
         const SizedBox(
           height: 15,
         ),

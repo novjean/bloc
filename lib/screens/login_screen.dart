@@ -118,7 +118,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       UserPreferences.setUser(user);
 
                                       if(user.name != ''){
-                                        Logx.ist(_TAG, 'hey ${user.name.toLowerCase()}, signing you in...');
+                                        Logx.ist(_TAG, '🤗 hey ${user.name.toLowerCase()}');
                                       }
                                       return signInWidget();
                                     } else {

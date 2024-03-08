@@ -6,6 +6,7 @@ import 'package:bloc/helpers/fresh.dart';
 import 'package:bloc/screens/manager/adverts/advert_checkout_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart';
@@ -21,6 +22,7 @@ import '../../../widgets/ui/button_widget.dart';
 import '../../../widgets/ui/textfield_widget.dart';
 import '../../db/entity/advert.dart';
 import '../../helpers/dummy.dart';
+import '../../routes/route_constants.dart';
 
 class AdvertAddEditScreen extends StatefulWidget {
   Advert advert;
@@ -49,8 +51,41 @@ class _AdvertAddEditScreenState extends State<AdvertAddEditScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_rounded, color: Constants.lightPrimary),
+          onPressed: () {
+            if(widget.task == 'add'){
+              for(String imageUrl in widget.advert.imageUrls){
+                FirestorageHelper.deleteFile(imageUrl);
+              }
+              FirestoreHelper.deleteAdvert(widget.advert.id);
+            }
+            Navigator.of(context).pop();
+          },
+        ),
       titleSpacing: 0,
-      title: AppBarTitle(title: 'advertise'),
+      title: Row(children: [
+        Container(
+          height: 50,
+          width: 40,
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage("assets/icons/logo-adaptive.png"),
+                fit: BoxFit.fitHeight),
+          ),
+        ),
+        InkWell(
+            onTap: () {
+              GoRouter.of(context)
+                  .pushNamed(RouteConstants.landingRouteName);
+            },
+            child: const Text('bloc.', style: TextStyle(color: Constants.lightPrimary),)),
+        const Spacer(),
+        Padding(
+          padding: const EdgeInsets.only(right: 20.0, left: 10),
+          child: Text('advertise', overflow: TextOverflow.ellipsis, style: TextStyle(color: Constants.lightPrimary),),
+        )
+      ],),
     ),
     body: _buildBody(context),
   );
@@ -85,7 +120,7 @@ class _AdvertAddEditScreenState extends State<AdvertAddEditScreen> {
                   child: ButtonWidget(text: 'upload ad image', onClicked: () async {
                     final image = await ImagePicker().pickImage(
                       source: ImageSource.gallery,
-                      imageQuality: 99,
+                      imageQuality: 98,
                       maxHeight: longSide,
                       maxWidth: shortSide,
                     );
@@ -105,9 +140,9 @@ class _AdvertAddEditScreenState extends State<AdvertAddEditScreen> {
                         newImage);
 
                     widget.advert.imageUrls.add(newImageUrl);
-                    setState(() {
-                      FirestoreHelper.pushAdvert(widget.advert);
-                    });
+                    // setState(() {
+                    //   FirestoreHelper.pushAdvert(widget.advert);
+                    // });
                   }),
                 )
               ]
