@@ -347,17 +347,21 @@ class _AdvertAddEditScreenState extends State<AdvertAddEditScreen> {
                   bookingFee: bookingFee,
                   total: grandTotal);
 
-              Advert freshAdvert = Fresh.freshAdvert(widget.advert);
-              await FirestoreHelper.pushAdvert(freshAdvert);
+              if(isAdvertValid()){
+                Advert freshAdvert = Fresh.freshAdvert(widget.advert);
+                await FirestoreHelper.pushAdvert(freshAdvert);
 
-              // navigate to payment page
-              await Navigator.of(context).push (
-                MaterialPageRoute(
-                    builder: (context) =>
-                        AdvertCheckoutScreen(
-                          advert: widget.advert,
-                        )),
-              );
+                // navigate to payment page
+                await Navigator.of(context).push (
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          AdvertCheckoutScreen(
+                            advert: widget.advert,
+                          )),
+                );
+              } else {
+                Logx.em(_TAG, 'advert not valid');
+              }
             } else {
               Logx.ilt(_TAG, 'end time cannot be before start time');
             }
@@ -477,4 +481,26 @@ class _AdvertAddEditScreenState extends State<AdvertAddEditScreen> {
     });
     return sTimeOfDay;
   }
+
+  bool isAdvertValid() {
+    if(UserPreferences.isUserLoggedIn()){
+      if(widget.advert.userId != UserPreferences.myUser.id){
+        Logx.em(_TAG, 'purchase not initiating as user id is not matching');
+        return false;
+      }
+      if(widget.advert.userPhone != UserPreferences.myUser.phoneNumber.toString()){
+        Logx.em(_TAG, 'advert purchase not initiating as user phone not matching');
+        return false;
+      }
+      if(widget.advert.imageUrls.isEmpty){
+        Logx.em(_TAG, 'advert purchase not initiating as no images found');
+        return false;
+      }
+      return true;
+    } else {
+      Logx.em(_TAG, 'user is not logged in, cannot purchase ticket!');
+      return false;
+    }
+  }
+
 }

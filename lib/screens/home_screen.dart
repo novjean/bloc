@@ -703,20 +703,21 @@ class _HomeScreenState extends State<HomeScreen> {
                                   onPressed: () async {
                                     Navigator.of(ctx).pop();
 
-                                    await Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              AdvertAddEditScreen(
-                                                advert: Dummy.getDummyAdvert(),
-                                                task: 'add',
-                                              )),
-                                    );
-
+                                    if(!kIsWeb){
+                                      await Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                AdvertAddEditScreen(
+                                                  advert: Dummy.getDummyAdvert(),
+                                                  task: 'add',
+                                                )),
+                                      );
+                                    }
                                   },
                                   child: const DelayedDisplay(
-                                    delay: Duration(seconds: 1),
+                                    delay: Duration(seconds: 0),
                                     child: Text(
-                                      "advertise here",
+                                      kIsWeb ? '' : "advertise here",
                                       style: TextStyle(
                                           color: Constants.primary, fontSize: 15),
                                     ),
@@ -727,7 +728,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       Navigator.of(ctx).pop();
                                     },
                                     child: const DelayedDisplay(
-                                      delay: Duration(seconds: 1),
+                                      delay: Duration(seconds: 3),
                                       child: Text(
                                         "close",
                                         style: TextStyle(
