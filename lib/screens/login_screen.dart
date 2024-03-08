@@ -117,7 +117,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       final blocUser.User user = Fresh.freshUserMap(data, true);
                                       UserPreferences.setUser(user);
 
-                                      if(user.name != 'bloc'){
+                                      if(user.name != ''){
                                         Logx.ist(_TAG, 'hey ${user.name.toLowerCase()}, signing you in...');
                                       }
                                       return signInWidget();

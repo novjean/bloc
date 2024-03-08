@@ -165,7 +165,33 @@ class _LoungeChatScreenState extends State<LoungeChatScreen> {
         appBar: AppBar(
           backgroundColor: Colors.black,
           titleSpacing: 0,
-          title: AppBarTitle(title: mLounge.name,),
+          title: Row(children: [
+            Container(
+              height: 50,
+              width: 40,
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                    image: AssetImage("assets/icons/logo-adaptive.png"),
+                    fit: BoxFit.fitHeight),
+              ),
+            ),
+            InkWell(
+                onTap: () {
+                  GoRouter.of(context)
+                      .pushNamed(RouteConstants.landingRouteName);
+                },
+                child: const Text('bloc.', style: TextStyle(color: Constants.lightPrimary),)),
+            const Spacer(),
+            GestureDetector(
+              onTap: () {
+                _showLoungeDetails(context);
+              },
+              child: Padding(
+                padding: const EdgeInsets.only(right: 20.0, left: 10),
+                child: Text(mLounge.name.toLowerCase(), overflow: TextOverflow.ellipsis, style: TextStyle(color: Constants.lightPrimary),),
+              ),
+            )
+          ],),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios_rounded, color: Constants.lightPrimary),
             onPressed: () {
