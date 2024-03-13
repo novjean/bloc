@@ -12,6 +12,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl_phone_field/country_picker_dialog.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 
+import '../db/shared_preferences/ui_preferences.dart';
 import '../db/shared_preferences/user_preferences.dart';
 import '../helpers/dummy.dart';
 import '../helpers/firestore_helper.dart';
@@ -114,11 +115,19 @@ class _LoginScreenState extends State<LoginScreen> {
                                           'user snapshot has data and exists');
                                       Map<String, dynamic> data = snapshot.data!
                                           .data() as Map<String, dynamic>;
-                                      final blocUser.User user = Fresh.freshUserMap(data, true);
+                                      blocUser.User user = Fresh.freshUserMap(data, true);
                                       UserPreferences.setUser(user);
+                                      UiPreferences.setHomePageIndex(0);
 
                                       if(user.name != ''){
                                         Logx.ist(_TAG, '🤗 hey ${user.name.toLowerCase()}');
+
+                                        user = user.copyWith(lastSeenAt: Timestamp.now().millisecondsSinceEpoch,
+                                        appVersion: Constants.appVersion, isAppUser: !kIsWeb, isIos: Theme.of(context).platform == TargetPlatform.iOS);
+                                        FirestoreHelper.pushUser(user);
+
+                                        // Logx.ist(_TAG, 'navigating to home');
+                                        GoRouter.of(context).go('/');
                                       }
                                       return signInWidget();
                                     } else {
@@ -379,7 +388,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       .pushReplacementNamed(RouteConstants.landingRouteName);
                   _isSkipLoaded = true;
                 } else {
-                  Logx.em(_TAG, 'state is not mounted');
+                  Logx.d(_TAG, 'state is not mounted');
                   Logx.d(_TAG, 'skip loaded : $_isSkipLoaded | logged in : ${UserPreferences.isUserLoggedIn()}');
 
                   // if(!_isSkipLoaded && !UserPreferences.isUserLoggedIn()){
