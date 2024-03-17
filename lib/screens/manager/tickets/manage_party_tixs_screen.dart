@@ -44,12 +44,9 @@ class _ManagePartyTixsScreenState extends State<ManagePartyTixsScreen> {
   List<Tix> searchList = [];
   bool _isSearching = false;
   String mLines = '';
-  late TextEditingController controller;
 
   @override
   void initState() {
-    controller = TextEditingController();
-
     mOptions = ['success', 'potential'];
     sOption = mOptions.first;
 
