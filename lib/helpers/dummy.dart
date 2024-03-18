@@ -24,6 +24,7 @@ import '../db/entity/city.dart';
 import '../db/entity/config.dart';
 import '../db/entity/friend.dart';
 import '../db/entity/friend_notification.dart';
+import '../db/entity/job.dart';
 import '../db/entity/lounge_chat.dart';
 import '../db/entity/genre.dart';
 import '../db/entity/lounge.dart';
@@ -326,6 +327,17 @@ class Dummy {
   static HistoryMusic getDummyHistoryMusic() {
     HistoryMusic dummy = HistoryMusic(
         id: StringUtils.getRandomString(28), userId: '', genre: '', count: 0);
+    return dummy;
+  }
+
+  static Job getDummyJob() {
+    Job dummy = Job(
+      id: StringUtils.getRandomString(28),
+      title: '',
+      description: '',
+      isActive: false,
+      postingDate: Timestamp.now().millisecondsSinceEpoch
+    );
     return dummy;
   }
 

@@ -24,6 +24,7 @@ import 'configs/manage_configs_screen.dart';
 import 'friends/manage_friends_screen.dart';
 import 'guest_wifi_edit_screen.dart';
 import 'inventory/manage_inventory_screen.dart';
+import 'jobs/manage_jobs_screen.dart';
 import 'lounges/manage_lounges_screen.dart';
 import 'notification_tests/manage_notification_tests_screen.dart';
 import 'organizers/manage_organizers_screen.dart';
@@ -176,6 +177,14 @@ class ManagerServicesScreen extends StatelessWidget {
                             builder: (ctx) => ManageInventoryScreen(
                                 serviceId: blocService.id,
                                 managerService: managerService)));
+                        break;
+                      }
+                    case 'jobs':
+                      {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (ctx) => ManageJobsScreen(
+                              serviceId: blocService.id,
+                            )));
                         break;
                       }
                     case 'lounges':

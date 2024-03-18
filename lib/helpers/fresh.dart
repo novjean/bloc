@@ -16,6 +16,7 @@ import '../db/entity/city.dart';
 import '../db/entity/config.dart';
 import '../db/entity/friend.dart';
 import '../db/entity/friend_notification.dart';
+import '../db/entity/job.dart';
 import '../db/entity/lounge_chat.dart';
 import '../db/entity/genre.dart';
 import '../db/entity/lounge.dart';
@@ -2330,6 +2331,83 @@ class Fresh {
       fresh = fresh.copyWith(count: historyMusic.count);
     } catch (e) {
       Logx.em(_TAG, 'historyMusic count not exist for id: ${historyMusic.id}');
+    }
+
+    return fresh;
+  }
+
+  /** job **/
+  static Job freshJobMap(
+      Map<String, dynamic> map, bool shouldUpdate) {
+    Job job = Dummy.getDummyJob();
+
+    bool isModelChanged = false;
+
+    try {
+      job = job.copyWith(id: map['id'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'job id not exist');
+    }
+    try {
+      job = job.copyWith(title: map['title'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'job userId not exist for id: ${job.id}');
+      isModelChanged = true;
+    }
+    try {
+      job = job.copyWith(description: map['description'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'job description not exist for id: ${job.id}');
+      isModelChanged = true;
+    }
+    try {
+      job = job.copyWith(isActive: map['isActive'] as bool);
+    } catch (e) {
+      Logx.em(_TAG, 'job isActive not exist for id: ${job.id}');
+      isModelChanged = true;
+    }
+    try {
+      job = job.copyWith(postingDate: map['postingDate'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'job postingDate not exist for id: ${job.id}');
+      isModelChanged = true;
+    }
+
+    if (isModelChanged && shouldUpdate) {
+      Logx.i(_TAG, 'updating job ${job.id}');
+      FirestoreHelper.pushJob(job);
+    }
+
+    return job;
+  }
+
+  static Job freshJob(Job job) {
+    Job fresh = Dummy.getDummyJob();
+
+    try {
+      fresh = fresh.copyWith(id: job.id);
+    } catch (e) {
+      Logx.em(_TAG, 'job id not exist');
+    }
+    try {
+      fresh = fresh.copyWith(title: job.title);
+    } catch (e) {
+      Logx.em(_TAG, 'job title not exist for id: ${job.id}');
+    }
+    try {
+      fresh = fresh.copyWith(description: job.description);
+    } catch (e) {
+      Logx.em(_TAG, 'job description not exist for id: ${job.id}');
+    }
+    try {
+      fresh = fresh.copyWith(isActive: job.isActive);
+    } catch (e) {
+      Logx.em(_TAG, 'job isActive not exist for id: ${job.id}');
+    }
+    try {
+      fresh = fresh.copyWith(postingDate: job.postingDate);
+    } catch (e) {
+      Logx.em(_TAG, 'job postingDate not exist for id: ${job.id}');
     }
 
     return fresh;
