@@ -2,7 +2,6 @@ import 'package:bloc/widgets/manager/orders/order_card.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import '../../../db/dao/bloc_dao.dart';
 import '../../../db/entity/cart_item.dart';
 import '../../../db/entity/bloc_order.dart';
 import '../../../helpers/firestore_helper.dart';

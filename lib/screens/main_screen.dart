@@ -1,6 +1,7 @@
 import 'package:bloc/db/entity/user.dart' as blocUser;
 import 'package:bloc/db/shared_preferences/table_preferences.dart';
 import 'package:bloc/db/shared_preferences/ui_preferences.dart';
+import 'package:bloc/screens/jobs/jobs_screen.dart';
 import 'package:bloc/screens/lounge/lounges_screen.dart';
 
 import 'package:bloc/screens/profile/profile_login_screen.dart';
@@ -487,6 +488,13 @@ class _MainScreenState extends State<MainScreen> {
           }
           break;
         }
+      case 'job openings':
+        {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (ctx) => JobsScreen()),
+          );
+          break;
+        }
       case 'manager':
         {
           Navigator.of(context).push(
@@ -528,7 +536,7 @@ class _MainScreenState extends State<MainScreen> {
         }
       default:
         {
-          GoRouter.of(context).go('/login/false');
+          GoRouter.of(context).goNamed(RouteConstants.landingRouteName);
           break;
         }
     }

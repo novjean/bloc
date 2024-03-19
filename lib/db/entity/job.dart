@@ -3,11 +3,9 @@ class Job {
   String title;
   String description;
   bool isActive;
-
   int postingDate;
 
 //<editor-fold desc="Data Methods">
-
 
   Job({
     required this.id,

@@ -83,7 +83,7 @@ class _BlocSlideItemState extends State<BlocSlideItem> {
                           ),
                         ),
                           progressIndicatorBuilder: (context, url, downloadProgress) =>
-                              CircularProgressIndicator(value: downloadProgress.progress, color: Constants.primary),
+                              LinearProgressIndicator(value: downloadProgress.progress, color: Constants.primary),
                         errorWidget: (context, url, error) => const Icon(Icons.error),
                       )
                       ).toList(),

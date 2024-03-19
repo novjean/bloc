@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:bloc/db/entity/party_guest.dart';
 import 'package:bloc/db/entity/user_lounge.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
-import 'package:bloc/widgets/ui/app_bar_title.dart';
 import 'package:bloc/widgets/ui/button_widget.dart';
 import 'package:bloc/widgets/ui/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';

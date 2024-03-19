@@ -89,19 +89,6 @@ class _OrganizerPartyAddEditScreenState
   }
 
   _buildBody(BuildContext context) {
-    int timeNow = Timestamp.now().millisecondsSinceEpoch;
-    bool isGuestListActive = widget.party.isGuestListActive &
-        (timeNow < widget.party.guestListEndTime);
-
-    bool showGuestListBuyTix = false;
-    if (!widget.party.isTBA &&
-        !widget.party.isTicketsDisabled &&
-        (widget.party.isTix || widget.party.ticketUrl.isNotEmpty)) {
-      if (isGuestListActive) {
-        showGuestListBuyTix = true;
-      }
-    }
-
     return ListView(
       shrinkWrap: true,
       children: [
@@ -170,29 +157,6 @@ class _OrganizerPartyAddEditScreenState
                     onChanged: (name) =>
                         widget.party = widget.party.copyWith(name: name),
                   ),
-
-                  // RichText(
-                  //   text: TextSpan(
-                  //       text: widget.party.name.isNotEmpty ? '${widget.party.name.toLowerCase()}' : 'event name',
-                  //       style: const TextStyle(
-                  //           fontFamily: Constants.fontDefault,
-                  //           color: Constants.lightPrimary,
-                  //           overflow: TextOverflow.ellipsis,
-                  //           fontSize: 22,
-                  //           fontWeight: FontWeight.bold),
-                  //       children: <TextSpan>[
-                  //         TextSpan(
-                  //             text: widget.party.chapter == 'I'
-                  //                 ? ' '
-                  //                 : widget.party.chapter,
-                  //             style: const TextStyle(
-                  //                 fontFamily: Constants.fontDefault,
-                  //                 color: Constants.lightPrimary,
-                  //                 fontSize: 18,
-                  //                 fontWeight: FontWeight.normal,
-                  //                 fontStyle: FontStyle.italic)),
-                  //       ]),
-                  // ),
                 ),
               ),
             ),
@@ -423,87 +387,6 @@ class _OrganizerPartyAddEditScreenState
         const SizedBox(height: 32.0),
         Footer(),
       ],
-    );
-  }
-
-  Widget _loadArtists(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirestoreHelper.getPartyArtists(widget.party.artistIds),
-      builder: (ctx, snapshot) {
-        switch (snapshot.connectionState) {
-          case ConnectionState.waiting:
-          case ConnectionState.none:
-            return const LoadingWidget();
-          case ConnectionState.active:
-          case ConnectionState.done:
-            {
-              List<Party> artists = [];
-              for (int i = 0; i < snapshot.data!.docs.length; i++) {
-                DocumentSnapshot document = snapshot.data!.docs[i];
-                Map<String, dynamic> data =
-                    document.data()! as Map<String, dynamic>;
-                final Party bloc = Fresh.freshPartyMap(data, false);
-                artists.add(bloc);
-              }
-              artists.sort((a, b) => a.name.compareTo(b.name));
-
-              List<Party> lineup = [];
-              List<Party> acts = [];
-              for (Party artist in artists) {
-                if (artist.isBigAct) {
-                  lineup.add(artist);
-                } else {
-                  acts.add(artist);
-                }
-              }
-              lineup.addAll(acts);
-
-              return _showArtists(context, lineup);
-            }
-        }
-      },
-    );
-  }
-
-  _showArtists(BuildContext context, List<Party> parties) {
-    return ListView.builder(
-      physics: const NeverScrollableScrollPhysics(),
-      shrinkWrap: true,
-      itemCount: parties.length,
-      scrollDirection: Axis.vertical,
-      itemBuilder: (BuildContext context, int index) {
-        Party party = parties[index];
-
-        if (index == 0) {
-          return Column(
-            children: [
-              const Padding(
-                padding: EdgeInsets.only(right: 15, top: 10.0, bottom: 5),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text('lineup',
-                        style: TextStyle(
-                            color: Constants.lightPrimary,
-                            overflow: TextOverflow.ellipsis,
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold)),
-                  ],
-                ),
-              ),
-              ArtistBanner(
-                party: party,
-                isClickable: true,
-              ),
-            ],
-          );
-        } else {
-          return ArtistBanner(
-            party: party,
-            isClickable: true,
-          );
-        }
-      },
     );
   }
 

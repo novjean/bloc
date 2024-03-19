@@ -25,6 +25,7 @@ import '../db/entity/config.dart';
 import '../db/entity/friend.dart';
 import '../db/entity/friend_notification.dart';
 import '../db/entity/job.dart';
+import '../db/entity/job_applicant.dart';
 import '../db/entity/lounge_chat.dart';
 import '../db/entity/genre.dart';
 import '../db/entity/lounge.dart';
@@ -337,6 +338,17 @@ class Dummy {
       description: '',
       isActive: false,
       postingDate: Timestamp.now().millisecondsSinceEpoch
+    );
+    return dummy;
+  }
+
+  static JobApplicant getDummyJobApplicant() {
+    JobApplicant dummy = JobApplicant(
+        id: StringUtils.getRandomString(28),
+        name: '',
+        phoneNumber: '',
+        resumeUrl: '',
+        creationDate: Timestamp.now().millisecondsSinceEpoch
     );
     return dummy;
   }

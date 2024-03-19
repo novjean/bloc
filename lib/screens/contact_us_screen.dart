@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../main.dart';
+import '../routes/route_constants.dart';
+import '../utils/constants.dart';
 import '../widgets/ui/app_bar_title.dart';
 import '../widgets/ui/toaster.dart';
 
@@ -13,6 +17,16 @@ class ContactUsScreen extends StatelessWidget {
         backgroundColor: Colors.black,
         title: AppBarTitle(title: 'contact us',),
         titleSpacing: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_rounded, color: Constants.lightPrimary),
+          onPressed: () {
+            if (kIsWeb) {
+              GoRouter.of(context).pushNamed(RouteConstants.landingRouteName);
+            } else {
+              Navigator.of(context).pop();
+            }
+          },
+        ),
       ),
       backgroundColor: Theme.of(context).backgroundColor,
       body: Padding(
@@ -44,19 +58,19 @@ class ContactUsScreen extends StatelessWidget {
               ),
               InkWell(
                 onTap: () async {
-                  var url = Uri.parse("tel:+917700004328");
+                  var url = Uri.parse("tel:+918830962982");
                   if (await canLaunchUrl(url)) {
                     await launchUrl(url);
                   } else {
                     Clipboard.setData(
-                        const ClipboardData(text: '+917700004328'))
+                        const ClipboardData(text: '+918830962982'))
                         .then((value) {
                       Toaster.shortToast('phone number copied');
                     });
                   }
                 },
                 child: Text(
-                  '\n+91 7700004328\n',
+                  '\n+91 8830962982\n',
                   style: TextStyle(
                       fontSize: 14, color: Theme.of(context).primaryColor),
                 ),

@@ -9,7 +9,7 @@ import '../../../helpers/firestore_helper.dart';
 import '../../../helpers/fresh.dart';
 import '../../../main.dart';
 import '../../../utils/constants.dart';
-import '../../../widgets/job/job_add_edit_screen.dart';
+import '../../jobs/job_add_edit_screen.dart';
 import '../../../widgets/job/manage_job_item.dart';
 import '../../../widgets/ui/app_bar_title.dart';
 import '../../../widgets/ui/loading_widget.dart';

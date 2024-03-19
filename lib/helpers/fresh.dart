@@ -17,6 +17,7 @@ import '../db/entity/config.dart';
 import '../db/entity/friend.dart';
 import '../db/entity/friend_notification.dart';
 import '../db/entity/job.dart';
+import '../db/entity/job_applicant.dart';
 import '../db/entity/lounge_chat.dart';
 import '../db/entity/genre.dart';
 import '../db/entity/lounge.dart';
@@ -2408,6 +2409,84 @@ class Fresh {
       fresh = fresh.copyWith(postingDate: job.postingDate);
     } catch (e) {
       Logx.em(_TAG, 'job postingDate not exist for id: ${job.id}');
+    }
+
+    return fresh;
+  }
+
+  /** job applicant **/
+  static JobApplicant freshJobApplicantMap(
+      Map<String, dynamic> map, bool shouldUpdate) {
+    JobApplicant jobApplicant = Dummy.getDummyJobApplicant();
+
+    bool isModelChanged = false;
+
+    try {
+      jobApplicant = jobApplicant.copyWith(id: map['id'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'jobApplicant id not exist');
+    }
+    try {
+      jobApplicant = jobApplicant.copyWith(name: map['name'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'jobApplicant userId not exist for id: ${jobApplicant.id}');
+      isModelChanged = true;
+    }
+    try {
+      jobApplicant = jobApplicant.copyWith(phoneNumber: map['phoneNumber'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'jobApplicant phoneNumber not exist for id: ${jobApplicant.id}');
+      isModelChanged = true;
+    }
+    try {
+      jobApplicant = jobApplicant.copyWith(resumeUrl: map['resumeUrl'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'jobApplicant resumeUrl not exist for id: ${jobApplicant.id}');
+      isModelChanged = true;
+    }
+    try {
+      jobApplicant = jobApplicant.copyWith(creationDate: map['creationDate'] as int);
+    } catch (e) {
+      Logx.em(_TAG, 'jobApplicant creationDate not exist for id: ${jobApplicant.id}');
+      isModelChanged = true;
+    }
+
+    if (isModelChanged && shouldUpdate) {
+      Logx.i(_TAG, 'updating jobApplicant ${jobApplicant.id}');
+      FirestoreHelper.pushJobApplicant(jobApplicant);
+    }
+
+    return jobApplicant;
+  }
+
+  static JobApplicant freshJobApplicant(JobApplicant jobApplicant) {
+    JobApplicant fresh = Dummy.getDummyJobApplicant();
+
+    try {
+      fresh = fresh.copyWith(id: jobApplicant.id);
+    } catch (e) {
+      Logx.em(_TAG, 'jobApplicant id not exist');
+    }
+    try {
+      fresh = fresh.copyWith(name: jobApplicant.name);
+    } catch (e) {
+      Logx.em(_TAG, 'jobApplicant name not exist for id: ${jobApplicant.id}');
+    }
+
+    try {
+      fresh = fresh.copyWith(phoneNumber: jobApplicant.phoneNumber);
+    } catch (e) {
+      Logx.em(_TAG, 'jobApplicant phoneNumber not exist for id: ${jobApplicant.id}');
+    }
+    try {
+      fresh = fresh.copyWith(resumeUrl: jobApplicant.resumeUrl);
+    } catch (e) {
+      Logx.em(_TAG, 'jobApplicant resumeUrl not exist for id: ${jobApplicant.id}');
+    }
+    try {
+      fresh = fresh.copyWith(creationDate: jobApplicant.creationDate);
+    } catch (e) {
+      Logx.em(_TAG, 'jobApplicant creationDate not exist for id: ${jobApplicant.id}');
     }
 
     return fresh;

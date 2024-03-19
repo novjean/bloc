@@ -65,6 +65,7 @@ List<Menu> getMenuList() {
     menuItems.add(Menu(Icons.keyboard_command_key_sharp, 'box office'));
     menuItems.add(Menu(Icons.label_important_outline, 'reservation'));
     menuItems.add(Menu(Icons.ads_click, 'advertise'));
+    menuItems.add(Menu(Icons.work, 'job openings'));
     menuItems.add(Menu(Icons.gamepad_outlined, 'organizer'));
     menuItems.add(Menu(Icons.support, 'support'));
 

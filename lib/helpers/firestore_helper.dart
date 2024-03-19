@@ -11,6 +11,7 @@ import 'package:bloc/db/entity/challenge_action.dart';
 import 'package:bloc/db/entity/config.dart';
 import 'package:bloc/db/entity/friend_notification.dart';
 import 'package:bloc/db/entity/job.dart';
+import 'package:bloc/db/entity/job_applicant.dart';
 import 'package:bloc/db/entity/lounge_chat.dart';
 import 'package:bloc/db/entity/genre.dart';
 import 'package:bloc/db/entity/guest_wifi.dart';
@@ -85,6 +86,7 @@ class FirestoreHelper {
   static String INVENTORY_OPTIONS = 'inventory_options';
   static String LOUNGES = 'lounges';
   static String JOBS = 'jobs';
+  static String JOB_APPLICANTS = 'job_applicants';
   static String LOUNGE_CHATS = 'lounge_chats';
   static String MANAGER_SERVICES = 'manager_services';
   static String MANAGER_SERVICE_OPTIONS = 'manager_service_options';
@@ -124,6 +126,7 @@ class FirestoreHelper {
 
   static int TABLE_PRIVATE_TYPE_ID = 1;
   static int TABLE_COMMUNITY_TYPE_ID = 2;
+
 
   /** ads **/
   static void pushAd(Ad ad) async {
@@ -1036,6 +1039,13 @@ class FirestoreHelper {
     }
   }
 
+  static pullJobs() {
+    return FirebaseFirestore.instance
+        .collection(JOBS)
+        .orderBy('title', descending: false)
+        .get();
+  }
+
   static getJobs() {
     return FirebaseFirestore.instance
         .collection(JOBS)
@@ -1045,6 +1055,23 @@ class FirestoreHelper {
   static void deleteJob(String docId) {
     FirebaseFirestore.instance.collection(JOBS).doc(docId).delete();
   }
+
+  /** job applicant **/
+  static void pushJobApplicant(JobApplicant jobApplicant) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection(JOB_APPLICANTS)
+          .doc(jobApplicant.id)
+          .set(jobApplicant.toMap());
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      Logx.em(_TAG, e.toString());
+    }
+  }
+
 
   /** lounge **/
   static void pushLounge(Lounge lounge) async {
@@ -2915,6 +2942,5 @@ class FirestoreHelper {
   static void deleteUserPhoto(String docId) {
     FirebaseFirestore.instance.collection(USER_PHOTOS).doc(docId).delete();
   }
-
 
 }
