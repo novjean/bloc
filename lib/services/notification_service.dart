@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:bloc/db/entity/friend_notification.dart';
+import 'package:bloc/db/entity/job_applicant.dart';
 import 'package:bloc/db/entity/lounge_chat.dart';
 import 'package:bloc/helpers/firestore_helper.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -279,6 +280,20 @@ class NotificationService {
 
             NotificationService.showDefaultNotification(title, body);
           }
+        }
+        break;
+      }
+      case 'job_applicants':{
+        JobApplicant jobApplicant = Fresh.freshJobApplicantMap(jsonDecode(data['document']), false);
+        if(notificationId == jobApplicant.id){
+          return;
+        } else {
+          notificationId = jobApplicant.id;
+
+          String title = '🏅️ new job applicant';
+          String body = '${jobApplicant.name} is looking for a job!';
+
+          NotificationService.showDefaultNotification(title, body);
         }
         break;
       }

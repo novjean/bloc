@@ -291,6 +291,25 @@ exports.advertFunction = functions
       });
     });
 
+exports.jobApplicantFunction = functions
+    .region('asia-south1')
+    .firestore
+    .document('job_applicants/{document}')
+    .onCreate((snapshot, context) => {
+      console.log(snapshot.data());
+      return admin.messaging().sendToTopic('job_applicants', {
+        notification: {
+          title: '🏅️ new job applicant',
+          body: snapshot.data().name + ' is looking for a job!',
+          clickAction: 'FLUTTER_NOTIFICATION_CLICK',
+        },
+        data: {
+          type: 'job_applicants',
+          document: JSON.stringify(snapshot.data()),
+        },
+      });
+    });
+
 exports.supportChatFunction = functions
     .region('asia-south1')
     .firestore
