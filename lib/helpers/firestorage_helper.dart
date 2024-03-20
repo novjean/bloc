@@ -32,6 +32,8 @@ class FirestorageHelper {
   static String UI_PHOTO_IMAGES = 'ui_photo_image';
   static String USER_IMAGES = 'user_image';
 
+  static String JOB_RESUMES = 'job_resumes';
+
 
   static Future<bool> deleteFile(String fileUrl) async {
     final firebaseStorage = FirebaseStorage.instance;
@@ -78,5 +80,60 @@ class FirestorageHelper {
 
     return url;
   }
+
+  static uploadDocFile(String directory, String docId, File file, String type) async {
+    Logx.d(_TAG, "uploadDocFile : ${file.path}");
+
+    String url = '';
+
+    try {
+      final ref = FirebaseStorage.instance
+          .ref()
+          .child(directory)
+          .child('$docId.$type');
+
+      await ref.putFile(file).then((pO){
+        Logx.i(_TAG, 'data transferred: ${pO.bytesTransferred / 1000} kb');
+      });
+      url = await ref.getDownloadURL();
+      Logx.i(_TAG, 'uploadDocFile success: $url');
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      logger.e(e);
+    }
+
+    return url;
+  }
+
+  static uploadDocFileWeb( String directory, String docId, Uint8List fileBytes, String fileName, String type) async {
+    Logx.d(_TAG, "uploadDocFileWeb()");
+
+    String url = '';
+
+    try {
+      final ref = FirebaseStorage.instance
+          .ref()
+          .child(directory)
+          .child('$docId.$type');
+
+      await ref.putData(fileBytes).then((pO){
+        Logx.i(_TAG, 'data transferred: ${pO.bytesTransferred / 1000} kb');
+      });
+      url = await ref.getDownloadURL();
+      Logx.i(_TAG, 'uploadDocFileWeb success: $url');
+    } on PlatformException catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } on Exception catch (e, s) {
+      Logx.e(_TAG, e, s);
+    } catch (e) {
+      logger.e(e);
+    }
+
+    return url;
+  }
+
 
 }

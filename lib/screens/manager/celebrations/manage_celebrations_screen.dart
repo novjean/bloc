@@ -75,7 +75,7 @@ class _ManageCelebrationsScreenState extends State<ManageCelebrationsScreen> {
           title: AppBarTitle(title: 'manage ${widget.serviceName}')),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          showActionsDialog(context);
+          _showActionsDialog(context);
         },
         backgroundColor: Theme.of(context).primaryColor,
         tooltip: 'actions',
@@ -159,7 +159,7 @@ class _ManageCelebrationsScreenState extends State<ManageCelebrationsScreen> {
     );
   }
 
-  showActionsDialog(BuildContext context) {
+  _showActionsDialog(BuildContext context) {
     return showDialog(
       context: context,
       builder: (BuildContext ctx) {

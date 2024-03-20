@@ -342,9 +342,10 @@ class Dummy {
     return dummy;
   }
 
-  static JobApplicant getDummyJobApplicant() {
+  static JobApplicant getDummyJobApplicant(String jobId) {
     JobApplicant dummy = JobApplicant(
         id: StringUtils.getRandomString(28),
+        jobId: jobId,
         name: '',
         phoneNumber: '',
         resumeUrl: '',

@@ -1,5 +1,7 @@
 class JobApplicant {
   String id;
+  String jobId;
+
   String name;
   String phoneNumber;
   String resumeUrl;
@@ -8,6 +10,7 @@ class JobApplicant {
 //<editor-fold desc="Data Methods">
   JobApplicant({
     required this.id,
+    required this.jobId,
     required this.name,
     required this.phoneNumber,
     required this.resumeUrl,
@@ -20,6 +23,7 @@ class JobApplicant {
       (other is JobApplicant &&
           runtimeType == other.runtimeType &&
           id == other.id &&
+          jobId == other.jobId &&
           name == other.name &&
           phoneNumber == other.phoneNumber &&
           resumeUrl == other.resumeUrl &&
@@ -28,6 +32,7 @@ class JobApplicant {
   @override
   int get hashCode =>
       id.hashCode ^
+      jobId.hashCode ^
       name.hashCode ^
       phoneNumber.hashCode ^
       resumeUrl.hashCode ^
@@ -37,6 +42,7 @@ class JobApplicant {
   String toString() {
     return 'JobApplicant{' +
         ' id: $id,' +
+        ' jobId: $jobId,' +
         ' name: $name,' +
         ' phoneNumber: $phoneNumber,' +
         ' resumeUrl: $resumeUrl,' +
@@ -46,6 +52,7 @@ class JobApplicant {
 
   JobApplicant copyWith({
     String? id,
+    String? jobId,
     String? name,
     String? phoneNumber,
     String? resumeUrl,
@@ -53,6 +60,7 @@ class JobApplicant {
   }) {
     return JobApplicant(
       id: id ?? this.id,
+      jobId: jobId ?? this.jobId,
       name: name ?? this.name,
       phoneNumber: phoneNumber ?? this.phoneNumber,
       resumeUrl: resumeUrl ?? this.resumeUrl,
@@ -63,6 +71,7 @@ class JobApplicant {
   Map<String, dynamic> toMap() {
     return {
       'id': this.id,
+      'jobId': this.jobId,
       'name': this.name,
       'phoneNumber': this.phoneNumber,
       'resumeUrl': this.resumeUrl,
@@ -73,6 +82,7 @@ class JobApplicant {
   factory JobApplicant.fromMap(Map<String, dynamic> map) {
     return JobApplicant(
       id: map['id'] as String,
+      jobId: map['jobId'] as String,
       name: map['name'] as String,
       phoneNumber: map['phoneNumber'] as String,
       resumeUrl: map['resumeUrl'] as String,

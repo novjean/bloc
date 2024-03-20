@@ -130,7 +130,7 @@ class _JobBannerState extends State<JobBanner> {
                       builder: (ctx) =>
                           JobApplyScreen(
                               job: widget.job,
-                            jobApplicant: Dummy.getDummyJobApplicant(),
+                            jobApplicant: Dummy.getDummyJobApplicant(widget.job.id),
                             task: 'add',
                           )));
                 },

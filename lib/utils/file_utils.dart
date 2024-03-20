@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:bloc/utils/string_utils.dart';
+import 'package:path/path.dart' as path;
 
 import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
@@ -46,6 +48,37 @@ class FileUtils {
 
     await Share.shareXFiles(files,
         text: '#blocCommunity: $shareMessage');
+  }
+
+  static void shareNetworkDoc(String urlImage) async {
+    final Uri url = Uri.parse(urlImage);
+    final response = await http.get(url);
+    final Uint8List bytes = response.bodyBytes;
+
+    try{
+      String urlFileName = path.basename(urlImage);
+      String fileType = 'pdf';
+      if (urlFileName.contains('.pdf')) {
+        fileType = 'pdf';
+      } else if(urlFileName.contains('.doc')){
+        fileType = 'doc';
+      } else {
+        fileType = 'docx';
+      }
+      String fileName = '${StringUtils.getRandomString(5)}.$fileType';
+
+      var temp = await getTemporaryDirectory();
+      final filepath = '${temp.path}/$fileName';
+      File(filepath).writeAsBytesSync(bytes);
+
+      final files = <XFile>[];
+      files.add(
+          XFile(filepath, name: fileName));
+
+      await Share.shareXFiles(files, text: fileName);
+    } catch(e){
+      Logx.est(_TAG, 'doc download failed');
+    }
   }
 
   static void saveNetworkImage(String imagePath, String fileName) async {

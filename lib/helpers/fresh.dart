@@ -2417,7 +2417,7 @@ class Fresh {
   /** job applicant **/
   static JobApplicant freshJobApplicantMap(
       Map<String, dynamic> map, bool shouldUpdate) {
-    JobApplicant jobApplicant = Dummy.getDummyJobApplicant();
+    JobApplicant jobApplicant = Dummy.getDummyJobApplicant('');
 
     bool isModelChanged = false;
 
@@ -2425,6 +2425,12 @@ class Fresh {
       jobApplicant = jobApplicant.copyWith(id: map['id'] as String);
     } catch (e) {
       Logx.em(_TAG, 'jobApplicant id not exist');
+    }
+    try {
+      jobApplicant = jobApplicant.copyWith(jobId: map['jobId'] as String);
+    } catch (e) {
+      Logx.em(_TAG, 'jobApplicant jobId not exist for id: ${jobApplicant.id}');
+      isModelChanged = true;
     }
     try {
       jobApplicant = jobApplicant.copyWith(name: map['name'] as String);
@@ -2460,13 +2466,19 @@ class Fresh {
   }
 
   static JobApplicant freshJobApplicant(JobApplicant jobApplicant) {
-    JobApplicant fresh = Dummy.getDummyJobApplicant();
+    JobApplicant fresh = Dummy.getDummyJobApplicant('');
 
     try {
       fresh = fresh.copyWith(id: jobApplicant.id);
     } catch (e) {
       Logx.em(_TAG, 'jobApplicant id not exist');
     }
+    try {
+      fresh = fresh.copyWith(jobId: jobApplicant.jobId);
+    } catch (e) {
+      Logx.em(_TAG, 'jobApplicant jobId not exist for id: ${jobApplicant.id}');
+    }
+
     try {
       fresh = fresh.copyWith(name: jobApplicant.name);
     } catch (e) {

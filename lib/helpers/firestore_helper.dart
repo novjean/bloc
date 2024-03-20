@@ -1072,6 +1072,16 @@ class FirestoreHelper {
     }
   }
 
+  static getJobApplicants() {
+    return FirebaseFirestore.instance
+        .collection(JOB_APPLICANTS)
+        .orderBy('creationDate', descending: true)
+        .snapshots();
+  }
+
+  static void deleteJobApplicant(String docId) {
+    FirebaseFirestore.instance.collection(JOB_APPLICANTS).doc(docId).delete();
+  }
 
   /** lounge **/
   static void pushLounge(Lounge lounge) async {
@@ -2942,5 +2952,6 @@ class FirestoreHelper {
   static void deleteUserPhoto(String docId) {
     FirebaseFirestore.instance.collection(USER_PHOTOS).doc(docId).delete();
   }
+
 
 }

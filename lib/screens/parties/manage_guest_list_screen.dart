@@ -1109,7 +1109,7 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
                 _showWhatsappGoogleRequestList(
                     reviewUsers, Constants.blocGoogleReview);
               } else {
-                Logx.d(_TAG, 'no users in list to review');
+                Logx.ilt(_TAG, 'no users in list to review');
               }
             }
           } else {
@@ -1243,7 +1243,7 @@ class _ManageGuestListScreenState extends State<ManageGuestListScreen> {
               if (reviewUsers.isNotEmpty) {
                 _showWhatsappAppReviewList(reviewUsers);
               } else {
-                Logx.d(_TAG, 'no users in list to review');
+                Logx.ilt(_TAG, 'no users in list to review');
               }
             }
           } else {

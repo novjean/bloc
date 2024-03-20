@@ -1,8 +1,6 @@
-import 'package:bloc/widgets/manager/manage_ad_item.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import '../../../db/entity/ad.dart';
 import '../../../db/entity/job.dart';
 import '../../../helpers/dummy.dart';
 import '../../../helpers/firestore_helper.dart';
